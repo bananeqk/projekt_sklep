@@ -1,0 +1,266 @@
+* {
+    font-family: 'Rubik', sans-serif;
+}
+
+:root {
+    --main-bg-color: #000000;
+    --main-text-color: #000000;
+    --second-text-color: #bbbec5;
+    --second-bg-color: #ffffff;
+}
+
+.primary-text {
+    color: var(--main-text-color);
+}
+
+.second-text {
+    color: var(--second-text-color);
+}
+
+.primary-bg {
+    background-color: var(--main-bg-color);
+}
+
+.secondary-bg {
+    background-color: var(--second-bg-color);
+}
+
+.rounded-full {
+    border-radius: 100%;
+}
+
+#wrapper {
+    overflow-x: hidden;
+    background: #ffffff;
+    background: linear-gradient(90deg, rgb(255, 255, 255) 25%, rgb(121, 120, 120) 90%);
+}
+
+#sidebar-wrapper {
+    min-height: 100vh;
+    margin-left: -15rem;
+    -webkit-transition: margin 0.25s ease-out;
+    -moz-transition: margin 0.25s ease-out;
+    -o-transition: margin 0.25s ease-out;
+    transition: margin 0.25s ease-out;
+}
+
+#sidebar-wrapper .sidebar-heading {
+    padding: 0.875rem 1.25rem;
+    font-size: 1.2rem;
+}
+
+#sidebar-wrapper .list-group {
+    width: 15rem;
+}
+
+#page-content-wrapper {
+    min-width: 100vw;
+}
+
+#wrapper.toggled #sidebar-wrapper {
+    margin-left: 0;
+}
+
+#menu-toggle {
+    cursor: pointer;
+}
+
+.list-group-item {
+    border: none;
+    padding: 20px 30px;
+}
+
+.list-group-item.active {
+    background-color: transparent;
+    color: var(--main-text-color);
+    font-weight: bold;
+    border: none;
+}
+
+.user-table {
+    border-radius: 1rem;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 2px 16px 0 rgba(60,72,88,.08);
+}
+
+.user-table th, .user-table td {
+    vertical-align: middle;
+    font-size: 1rem;
+}
+
+.user-table thead th {
+    background: #f8f9fa;
+    color: #495057;
+    font-weight: 600;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.user-table tbody tr {
+    transition: background 0.2s;
+}
+
+.user-table tbody tr:hover {
+    background: #f1f3f6;
+}
+
+.user-table .badge {
+    font-size: 0.95em;
+    padding: 0.5em 0.8em;
+    border-radius: 0.5em;
+}
+
+.user-table .btn {
+    border-radius: 0.4em;
+    transition: background 0.2s, color 0.2s;
+}
+
+/* --- Carousel Edit Section --- */
+.carousel-card {
+    background: #fff;
+    border-radius: 1.2rem;
+    box-shadow: 0 4px 24px 0 rgba(60,72,88,.10);
+    padding: 2.5rem 2rem 2rem 2rem;
+    margin-top: 2.5rem;
+    margin-bottom: 2rem;
+    border: 1px solid #f1f3f6;
+}
+
+.carousel-form-title {
+    font-weight: 700;
+    color: #22223b;
+    margin-bottom: 1.7rem;
+    letter-spacing: 0.5px;
+}
+
+.carousel-form .form-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.4rem;
+}
+
+.carousel-form .form-control,
+.carousel-form .form-select {
+    border-radius: 0.7rem;
+    border: 1px solid #e9ecef;
+    background: #f8f9fa;
+    font-size: 1.05rem;
+    margin-bottom: 1.1rem;
+    transition: border-color 0.2s;
+}
+
+.carousel-form .form-control:focus {
+    border-color: #ffc107;
+    box-shadow: 0 0 0 0.2rem rgba(255,193,7,.15);
+    background: #fff;
+}
+
+.carousel-form .btn {
+    border-radius: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 0.7rem 0;
+    font-size: 1.1rem;
+    box-shadow: 0 2px 8px 0 rgba(255,193,7,.08);
+    transition: background 0.2s, color 0.2s;
+}
+
+.carousel-form .btn-warning {
+    background: #000000;
+    border: none;
+    color: #ffffff;
+}
+
+.carousel-form .btn-warning:hover {
+    background: linear-gradient(90deg, #000000 60%, #494848 100%);
+    color: #c9c9c9;
+}
+
+.carousel-table th, .carousel-table td {
+    vertical-align: middle;
+    font-size: 1rem;
+    text-align: center;
+}
+
+.carousel-table thead th {
+    background: #f8f9fa;
+    color: #495057;
+    font-weight: 600;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.carousel-table img {
+    border-radius: 0.7rem;
+    box-shadow: 0 2px 12px 0 rgba(60,72,88,.10);
+    max-width: 120px;
+    max-height: 80px;
+    object-fit: cover;
+    background: #f1f3f6;
+    border: 1px solid #e9ecef;
+}
+
+.carousel-table .btn {
+    border-radius: 0.5em;
+    margin: 0 0.15em;
+    font-size: 0.95em;
+    padding: 0.4em 0.9em;
+}
+
+.carousel-table .btn-primary {
+    background: #2a7d19;
+    border: none;
+    color: #fff;
+}
+
+.carousel-table .btn-primary:hover {
+    background: linear-gradient(90deg, #2a7d19 60%, #33a01d 100%);
+    color: #fff;
+}
+
+.carousel-table .btn-danger {
+    background: #a62c19;
+    border: none;
+    color: #fff;
+}
+
+.carousel-table .btn-danger:hover {
+    background: linear-gradient(90deg, #b71c1c 60%, #ef5350 100%);
+    color: #fff;
+}
+
+/* Responsive adjustments */
+@media (max-width: 991.98px) {
+    .carousel-card {
+        padding: 1.2rem 0.7rem 1.2rem 0.7rem;
+    }
+    .carousel-table img {
+        max-width: 80px;
+        max-height: 60px;
+    }
+}
+
+@media (min-width: 768px) {
+    #sidebar-wrapper {
+        margin-left: 0;
+    }
+
+    #page-content-wrapper {
+        min-width: 0;
+        width: 100%;
+    }
+
+    #wrapper.toggled #sidebar-wrapper {
+        margin-left: -15rem;
+    }
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+#wrapper {
+    flex: 1;
+}

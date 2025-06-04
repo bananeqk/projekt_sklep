@@ -1,0 +1,129 @@
+* {
+    font-family: "Rubik", sans-serif;
+}
+
+.login-button {
+    background-color: #009970;
+    color: #fff;
+    font-size: 14px;
+    padding: 8px 20px;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: 0.3s background-color;
+}
+
+.login-button:hover {
+    background-color: #00b383;
+}
+
+.navbar-toggler {
+    border: none;
+    font-size: 1.25rem;
+    margin-left: 1.25rem;
+}
+
+.navbar-toggler .btn-close:focus {
+    box-shadow: none;
+    outline: none;
+}
+
+.nav-link {
+    color: #666777;
+    font-weight: 500;
+    position: relative;
+
+}
+
+.nav-link:hover, .nav-link.active {
+    color: #000;
+
+}
+
+@media (max-width: 991px) {
+    .nav-link::before {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 2px;
+        background-color: #009970;
+        visibility: hidden;
+        transition: 0.3s ease-in-out;
+    }
+
+    .nav-link:hover::before {
+        width: 100%;
+        visibility: visible;
+    }
+}
+
+.button-1 {
+  background-color: #000000;
+  border-radius: 8px;
+  color: #FFFFFF;
+  font-size: 14px;
+  font-weight: 500;
+  height: 40px;
+  padding: 10px 16px;
+  text-decoration: none;
+  transition: color 100ms;
+  margin-left: 10px;
+}
+
+.button-1:hover,
+.button-1:focus {
+  background-color: #3a3a3a;
+}
+
+.box-area {
+    width: 930px;
+}
+
+.right-box {
+    padding: 40px 30px;
+}
+
+::placeholder {
+    font-size: 16px;
+}
+
+.c-img {
+    filter: brightness(0.5);
+}
+
+.carousel-text {
+    font-family: "Rubik", sans-serif;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    font-weight: 800;
+    font-size: 60px;
+}
+
+.carousel-text-top {
+    font-family: "Rubik", sans-serif;
+    font-weight: 400;
+}
+
+#mainpage-carousel .carousel-item img {
+    object-fit: cover;
+    height: 100vh;
+}
+
+hr.hr-text {
+    position: relative;
+    border: none;
+    height: 1px;
+    background: #999;
+  }
+
+.card-hover {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-hover:hover {
+    transform: translateY(-15px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
