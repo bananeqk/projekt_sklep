@@ -12,10 +12,7 @@ if (isset($_POST['upload_product'])) {
     $color_id = isset($_POST['product_color']) && $_POST['product_color'] !== '' ? intval($_POST['product_color']) : null;
 
     // Obsługa pliku
-    $target_dir = "../produkty/";
-    if (!is_dir($target_dir)) {
-        mkdir($target_dir, 0777, true);
-    }
+    $target_dir = "../zdjecia/produkty";
     $img_name = basename($_FILES["product_image"]["name"]);
     $img_ext = strtolower(pathinfo($img_name, PATHINFO_EXTENSION));
     $allowed = ['jpg', 'jpeg', 'png', 'webp', 'gif'];

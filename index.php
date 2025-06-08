@@ -31,8 +31,7 @@ if ($result) {
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
 
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 
   <title>Main - strona</title>
 </head>
@@ -99,7 +98,7 @@ if ($result) {
         <?php endif; ?>
 
         <?php if ($_SESSION["user"]["uprawnienia_id"] == 2): ?>
-          <a href="admin/admin.php" class="btn btn-danger"><i class="bi bi-person-fill"></i></a>
+          <a href="admin/profile.php" class="btn btn-danger"><i class="bi bi-person-fill"></i></a>
         <?php endif; ?>
 
       <?php else: ?>

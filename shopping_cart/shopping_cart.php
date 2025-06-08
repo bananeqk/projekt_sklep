@@ -1,4 +1,20 @@
-<?php session_start(); ?>
+<?php
+session_start();
+require_once("../misc/database.php");
+
+$cart = $_SESSION["cart"] ?? [];
+$product_data = [];
+$total = 0;
+$total_items = array_sum($cart);
+
+if ($cart) {
+    $ids = implode(",", array_map("intval", array_keys($cart)));
+    $result = mysqli_query($conn, "SELECT * FROM produkty WHERE id IN ($ids)");
+    while ($row = mysqli_fetch_assoc($result)) {
+        $product_data[$row['id']] = $row;
+    }
+}
+?>
 
 <!DOCTYPE html>
 <html lang="pl">
@@ -162,7 +178,7 @@
                             <a class="nav-link mx-lg-2" href="#">Kontakt</a>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="button-1 mx-lg-2 my-2 my-lg-0"><i class="bi bi-cart"></i></a>
+                            <a href="shopping_cart.php" class="button-1 mx-lg-2 my-2 my-lg-0"><i class="bi bi-cart"></i></a>
                         </li>
 
                     </ul>
@@ -198,132 +214,85 @@
                     <!-- Cart Items Section -->
                     <div class="col-lg-8">
                         <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h4 class="mb-0">Shopping Cart</h4>
-                            <span class="text-muted">3 items</span>
+                            <h4 class="mb-0">Twój koszyk</h4>
+                            <span class="text-muted">
+                                <?php
+                                // Popraw odmianę słowa "produkt" po polsku
+                                if ($total_items == 1) {
+                                    echo "1 produkt";
+                                } elseif ($total_items % 10 >= 2 && $total_items % 10 <= 4 && ($total_items % 100 < 10 || $total_items % 100 >= 20)) {
+                                    echo $total_items . " produkty";
+                                } else {
+                                    echo $total_items . " produktów";
+                                }
+                                ?>
+                            </span>
                         </div>
 
                         <!-- Product Cards -->
                         <div class="d-flex flex-column gap-3">
-                            <!-- Product 1 -->
-                            <div class="product-card p-3 shadow-sm">
-                                <div class="row align-items-center">
-                                    <div class="col-md-2">
-                                        <img src="https://via.placeholder.com/100" alt="Product" class="product-image">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <h6 class="mb-1">Wireless Headphones</h6>
-                                        <p class="text-muted mb-0">Black | Premium Series</p>
-                                        <span class="discount-badge mt-2">20% OFF</span>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="d-flex align-items-center gap-2">
-                                            <button class="quantity-btn" onclick="updateQuantity(1, -1)">-</button>
-                                            <input type="number" class="quantity-input" value="1" min="1">
-                                            <button class="quantity-btn" onclick="updateQuantity(1, 1)">+</button>
+                            <?php if (!$cart): ?>
+                                <div class="alert alert-info">Koszyk jest pusty.</div>
+                            <?php else: ?>
+                                <?php foreach ($cart as $pid => $qty): ?>
+                                    <?php if (!isset($product_data[$pid])) continue; $p = $product_data[$pid]; ?>
+                                    <div class="product-card p-3 shadow-sm">
+                                        <div class="row align-items-center">
+                                            <div class="col-md-2">
+                                                <img src="../produkty/<?= htmlspecialchars($p['img_path']) ?>" alt="Product" class="product-image">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h6 class="mb-1"><?= htmlspecialchars($p['nazwa']) ?></h6>
+                                                <p class="text-muted mb-0"><?= htmlspecialchars($p['opis']) ?></p>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <form method="post" action="update_cart.php" class="d-flex align-items-center gap-2">
+                                                    <input type="hidden" name="product_id" value="<?= $pid ?>">
+                                                    <input type="number" class="quantity-input" name="quantity" value="<?= $qty ?>" min="1" readonly>
+                                                    <button class="quantity-btn" name="action" value="decrease" type="submit">-</button>
+                                                    <button class="quantity-btn" name="action" value="increase" type="submit">+</button>
+                                                </form>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <?php
+                                                $price = $p['cena'] * (1 - $p['znizka']/100);
+                                                $total += $price * $qty;
+                                                ?>
+                                                <span class="fw-bold"><?= number_format($price * $qty, 2) ?> zł</span>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <form method="post" action="update_cart.php" style="display:inline;">
+                                                    <input type="hidden" name="product_id" value="<?= $pid ?>">
+                                                    <button class="btn btn-link p-0 remove-btn" name="action" value="remove" title="Usuń">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-2">
-                                        <span class="fw-bold">$129.99</span>
-                                    </div>
-                                    <div class="col-md-1">
-                                        <i class="bi bi-trash remove-btn"></i>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Product 2 -->
-                            <div class="product-card p-3 shadow-sm">
-                                <div class="row align-items-center">
-                                    <div class="col-md-2">
-                                        <img src="https://via.placeholder.com/100" alt="Product" class="product-image">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <h6 class="mb-1">Smart Watch</h6>
-                                        <p class="text-muted mb-0">Silver | Series 7</p>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="d-flex align-items-center gap-2">
-                                            <button class="quantity-btn" onclick="updateQuantity(2, -1)">-</button>
-                                            <input type="number" class="quantity-input" value="1" min="1">
-                                            <button class="quantity-btn" onclick="updateQuantity(2, 1)">+</button>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <span class="fw-bold">$299.99</span>
-                                    </div>
-                                    <div class="col-md-1">
-                                        <i class="bi bi-trash remove-btn"></i>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Product 3 -->
-                            <div class="product-card p-3 shadow-sm">
-                                <div class="row align-items-center">
-                                    <div class="col-md-2">
-                                        <img src="https://via.placeholder.com/100" alt="Product" class="product-image">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <h6 class="mb-1">Wireless Charger</h6>
-                                        <p class="text-muted mb-0">White | 15W Fast Charge</p>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="d-flex align-items-center gap-2">
-                                            <button class="quantity-btn" onclick="updateQuantity(3, -1)">-</button>
-                                            <input type="number" class="quantity-input" value="1" min="1">
-                                            <button class="quantity-btn" onclick="updateQuantity(3, 1)">+</button>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <span class="fw-bold">$49.99</span>
-                                    </div>
-                                    <div class="col-md-1">
-                                        <i class="bi bi-trash remove-btn"></i>
-                                    </div>
-                                </div>
-                            </div>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </div>
                     </div>
 
                     <!-- Summary Section -->
                     <div class="col-lg-4">
                         <div class="summary-card p-4 shadow-sm">
-                            <h5 class="mb-4">Order Summary</h5>
-
+                            <h5 class="mb-4">Podsumowanie</h5>
                             <div class="d-flex justify-content-between mb-3">
-                                <span class="text-muted">Subtotal</span>
-                                <span>$479.97</span>
-                            </div>
-                            <div class="d-flex justify-content-between mb-3">
-                                <span class="text-muted">Discount</span>
-                                <span class="text-success">-$26.00</span>
-                            </div>
-                            <div class="d-flex justify-content-between mb-3">
-                                <span class="text-muted">Shipping</span>
-                                <span>$5.00</span>
+                                <span class="text-muted">Suma</span>
+                                <span><?= $total ?> zł</span>
                             </div>
                             <hr>
                             <div class="d-flex justify-content-between mb-4">
-                                <span class="fw-bold">Total</span>
-                                <span class="fw-bold">$458.97</span>
+                                <span class="fw-bold">Do zapłaty</span>
+                                <span class="fw-bold"><?= $total ?> zł</span>
                             </div>
-
-                            <!-- Promo Code -->
-                            <div class="mb-4">
-                                <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="Promo code">
-                                    <button class="btn btn-outline-secondary" type="button">Apply</button>
-                                </div>
-                            </div>
-
-                            <button class="btn btn-primary checkout-btn w-100 mb-3">
-                                Proceed to Checkout
+                            <button class="btn btn-primary checkout-btn w-100 mb-3"
+                                <?php if (!$cart || !isset($_SESSION["user"])) ?>
+                                onclick="window.location.href='order_checkout.php'; return false;">
+                                Zamów
                             </button>
-
-                            <div class="d-flex justify-content-center gap-2">
-                                <i class="bi bi-shield-check text-success"></i>
-                                <small class="text-muted">Secure checkout</small>
-                            </div>
                         </div>
                     </div>
                 </div>

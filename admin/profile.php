@@ -1,8 +1,8 @@
 <?php
 session_start();
 require_once("../misc/database.php");
-include '../adminDashboard/head.php';
-include '../adminDashboard/sidebar.php';
+include '../structure/admin/head.php';
+include '../structure/admin/sidebar.php';
 ?>
 <div id="page-content-wrapper">
     <nav class="navbar navbar-expand-lg navbar-light bg-transparent py-4 px-4">
@@ -17,21 +17,11 @@ include '../adminDashboard/sidebar.php';
         </button>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle second-text fw-bold switch" href="#" id="navbarDropdown"
-                        role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fas fa-user me-2"></i>
-                        <?php if (isset($_SESSION["user"])): ?>
-                            <?= htmlspecialchars($_SESSION["user"]["imie_nazwisko"]) ?>
-                        <?php endif; ?>
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="#">Profil</a></li>
-                        <li><a class="dropdown-item" href="#">Ustawienia</a></li>
-                        <li><a class="dropdown-item" href="#">Wyloguj się</a></li>
-                    </ul>
-                </li>
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 fw-bold second-text text-dark"> 
+                <i class="fas fa-user me-2"></i>
+                <?php if (isset($_SESSION["user"])): ?>
+                    <?= htmlspecialchars($_SESSION["user"]["imie_nazwisko"]) ?>
+                <?php endif; ?>
             </ul>
         </div>
     </nav>
@@ -97,11 +87,6 @@ include '../adminDashboard/sidebar.php';
                                             echo $role;
                                             ?>
                                         </h6>
-                                        <div class="d-flex align-items-center mt-3">
-                                            <button id="toggle-darkmode" class="btn btn-outline-secondary w-100">
-                                                <i class="bi bi-moon"></i> Przełącz tryb nocny
-                                            </button>
-                                        </div>
                                     </div>
                                 </div>
                             </div>

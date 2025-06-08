@@ -27,6 +27,17 @@
         integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
 
     <title>Main - strona</title>
+    <style>
+        body {
+            padding-top: 80px !important;
+        }
+
+        @media (max-width: 991px) {
+            body {
+                padding-top: 100px !important;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -78,7 +89,7 @@
                             <a class="nav-link mx-lg-2" href="#">Kontakt</a>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="button-1 mx-lg-2 my-2 my-lg-0"><i class="bi bi-cart"></i></a>
+                            <a href="shopping_cart/shopping_cart.php" class="button-1 mx-lg-2 my-2 my-lg-0"><i class="bi bi-cart"></i></a>
                         </li>
 
                     </ul>
@@ -107,7 +118,7 @@
     </nav>
 
     <body>
-        <div class="container py-5" style="padding-top: 100px;">
+        <div class="container py-5">
             <!-- Top Bar -->
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h4 class="mb-0">Kolekcja</h4>
@@ -235,9 +246,8 @@
                             $final_price = $discount > 0 ? number_format($row['cena'] * (1 - $discount / 100), 2) : $price;
                             ?>
                             <div class="col-md-4">
-                                <a href="product_card/product_card.php?id=<?= $row['id'] ?>"
-                                    style="text-decoration:none;color:inherit;">
-                                    <div class="product-card shadow-sm">
+                                <div class="product-card shadow-sm">
+                                    <a href="product_card/product_card.php?id=<?= $row['id'] ?>" style="text-decoration:none;color:inherit;">
                                         <div class="position-relative">
                                             <img src="produkty/<?= htmlspecialchars($row['img_path']) ?>"
                                                 class="product-image w-100" alt="Product">
@@ -248,33 +258,41 @@
                                                 <i class="bi bi-heart"></i>
                                             </button>
                                         </div>
-                                        <div class="p-3">
-                                            <h5 class="mb-1 header"><?= htmlspecialchars($row['nazwa']) ?></h5>
-                                            <h6 class="mb-1 header-child"><?= htmlspecialchars($row['opis']) ?></h6>
-                                            <div class="rating-stars mb-2">
-                                                <?php
-                                                $rating = (float) $row['ocena'];
-                                                for ($i = 1; $i <= 5; $i++) {
-                                                    if ($rating >= $i) {
-                                                        echo '<i class="bi bi-star-fill"></i>';
-                                                    } elseif ($rating >= $i - 0.5) {
-                                                        echo '<i class="bi bi-star-half"></i>';
-                                                    } else {
-                                                        echo '<i class="bi bi-star"></i>';
-                                                    }
+                                    </a>
+                                    <div class="p-3">
+                                        <h5 class="mb-1 header"><?= htmlspecialchars($row['nazwa']) ?></h5>
+                                        <h6 class="mb-1 header-child"><?= htmlspecialchars($row['opis']) ?></h6>
+                                        <div class="rating-stars mb-2">
+                                            <?php
+                                            $rating = (float) $row['ocena'];
+                                            for ($i = 1; $i <= 5; $i++) {
+                                                if ($rating >= $i) {
+                                                    echo '<i class="bi bi-star-fill"></i>';
+                                                } elseif ($rating >= $i - 0.5) {
+                                                    echo '<i class="bi bi-star-half"></i>';
+                                                } else {
+                                                    echo '<i class="bi bi-star"></i>';
                                                 }
-                                                ?>
-                                                <span class="text-muted ms-2">(<?= $rating ?>)</span>
-                                            </div>
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                <span class="price"><?= $final_price ?> zł</span>
-                                            </div>
-                                            <?php if ($discount > 0): ?>
-                                                <small class="text-secondary">Cena regularna: <?= $price ?> zł</small>
-                                            <?php endif; ?>
+                                            }
+                                            ?>
+                                            <span class="text-muted ms-2">(<?= $rating ?>)</span>
                                         </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="price"><?= $final_price ?> zł</span>
+                                        </div>
+                                        <?php if ($discount > 0): ?>
+                                            <small class="text-secondary">Cena regularna: <?= $price ?> zł</small>
+                                        <?php endif; ?>
+                                        <!-- Przycisk dodawania do koszyka (zawsze 1 sztuka) -->
+                                        <form method="post" action="shopping_cart/add_to_cart.php" class="mt-2">
+                                            <input type="hidden" name="product_id" value="<?= $row['id'] ?>">
+                                            <input type="hidden" name="quantity" value="1">
+                                            <button type="submit" class="btn btn-primary btn-sm w-100">
+                                                <i class="bi bi-cart-plus"></i> Dodaj do koszyka
+                                            </button>
+                                        </form>
                                     </div>
-                                </a>
+                                </div>
                             </div>
                         <?php } ?>
                     </div>
@@ -290,9 +308,5 @@
         <!-- Bootstrap 5.3 JS Bundle -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
-
-</html>
-
-</body>
 
 </html>

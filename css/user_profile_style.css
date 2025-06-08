@@ -1,0 +1,145 @@
+        body {
+            padding-top: 100px !important;
+            background: #fff !important;
+        }
+
+        @media (max-width: 991px) {
+            body {
+                padding-top: 120px !important;
+            }
+        }
+
+        .banner-darken {
+            position: relative;
+            overflow: hidden;
+            height: 240px;
+        }
+
+        .banner-darken::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 1;
+        }
+
+        .banner-img-darken {
+            width: 100%;
+            height: 240px;
+            object-fit: cover;
+            border-radius: 15px;
+            position: relative;
+            z-index: 0;
+        }
+
+        .profile-pic-darken {
+            width: 140px;
+            height: 140px;
+            object-fit: cover;
+            border: 4px solid #fff;
+            background: #fff;
+        }
+
+        .profile-sidebar {
+            background: linear-gradient(135deg, #4158D0 0%, #C850C0 100%);
+        }
+
+        .nav-pills .nav-link {
+            color: #6c757d;
+            border-radius: 10px;
+            padding: 12px 20px;
+            margin: 4px 0;
+            transition: all 0.3s ease;
+        }
+
+        .nav-pills .nav-link:hover {
+            background-color: #f8f9fa;
+        }
+
+        .nav-pills .nav-link.active {
+            background-color: #fff;
+            color: #4158D0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, #4158D0 0%, #C850C0 100%);
+            height: 240px;
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .banner-img-darken {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            height: 240px;
+            object-fit: cover;
+            border-radius: 15px;
+            display: block;
+        }
+
+        .banner-darken::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.70);
+            border-radius: 15px;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .profile-pic {
+            width: 140px;
+            height: 140px;
+            border: 4px solid #fff;
+            margin-top: -70px;
+            background-color: #fff;
+            position: relative;
+            z-index: 3;
+        }
+
+        .profile-pic-darken {
+            filter: brightness(0.7);
+        }
+
+        .settings-card {
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .settings-card:hover {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-switch .form-check-input {
+            width: 3em;
+            height: 1.5em;
+            margin-left: -3.5em;
+        }
+
+        .activity-item {
+            border-left: 2px solid #e9ecef;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .activity-item::before {
+            content: '';
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #4158D0;
+            position: absolute;
+            left: -7px;
+            top: 5px;
+        }

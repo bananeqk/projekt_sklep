@@ -1,5 +1,3 @@
-
-
 <div class="bg-light" id="sidebar-wrapper">
     <div class="sidebar-heading text-center py-4 primary-text fs-4 fw-bold text-uppercase border-bottom switch logo">
         <img src="../zdjecia/sklep_logo.png" width="150px" id="logo-img"><br>Skibidi Firma

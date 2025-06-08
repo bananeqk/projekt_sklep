@@ -1,19 +1,69 @@
 <?php
+// sprawdzanie czy jest jakiś błąd wyświetla się najczęściej na początku strony jak się wejdzie na źródło strony
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 session_start();
 require_once("../misc/database.php");
 
 $product = null;
+$id = null;
 if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     $id = intval($_GET['id']);
     $result = mysqli_query($conn, "SELECT * FROM produkty p JOIN kolory k ON p.kolor_id = k.id WHERE p.id = $id");
     $product = mysqli_fetch_assoc($result);
 }
+// może się zdarzyć sytuacja że nie znajdzie produktu, dodałem to bo był duży problem że w bazie danych był id = 9 a na stronie id = 3 na dole jest sprawdzanie dalej czy id istnieje w bazie czy taki produkt jest 
 if (!$product) {
     echo "<div class='container mt-5'><div class='alert alert-danger'>Nie znaleziono produktu.</div></div>";
     exit;
 }
 // Przygotuj galerię (jeśli masz tylko jedno zdjęcie, powiel je)
 $gallery = [$product['img_path']];
+
+// dodawanie recenzji
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['user']['id'], $_POST['ocena'], $_POST['tresc'])) {
+    $user_id = (int)$_SESSION['user']['id'];
+    // nie usuwać ręcznie produktów z bazy danych, bo może się zdarzyć że nie będzie id produktu
+    if (!isset($id) || !is_numeric($id)) {
+        die("<div class='alert alert-danger'>Błąd: Nieprawidłowy produkt.</div>");
+    }
+    $prod_id = (int)$id;
+    $ocena = max(1, min(5, (int)$_POST['ocena']));
+    $tresc = trim($_POST['tresc']);
+
+    // sprawdzam tutaj czy produkt jest w bazie
+    $prod_check = mysqli_query($conn, "SELECT id FROM produkty WHERE id = $prod_id");
+    if (!$prod_check || mysqli_num_rows($prod_check) == 0) {
+        die("<div class='alert alert-danger'>Błąd: Produkt nie istnieje w bazie.</div>");
+    }
+
+    // żeby nie dublować od użytkownika recenzji, sprawdzam czy już istnieje
+    $rec_check = mysqli_prepare($conn, "SELECT id FROM recenzje WHERE id_uzytkownika=? AND id_produktu=?");
+    mysqli_stmt_bind_param($rec_check, "ii", $user_id, $prod_id);
+    mysqli_stmt_execute($rec_check);
+    $rec_res = mysqli_stmt_get_result($rec_check);
+
+    if (mysqli_num_rows($rec_res) == 0 && $tresc !== '') {
+        $now = date('Y-m-d H:i:s');
+        $rec_add = mysqli_prepare($conn, "INSERT INTO recenzje (id_uzytkownika, id_produktu, ocena, tresc, data) VALUES (?, ?, ?, ?, ?)");
+        mysqli_stmt_bind_param($rec_add, "iiiss", $user_id, $prod_id, $ocena, $tresc, $now);
+        if (!mysqli_stmt_execute($rec_add)) {
+            die("<div class='alert alert-danger'>Błąd przy dodawaniu recenzji: " . htmlspecialchars(mysqli_stmt_error($rec_add)) . "</div>");
+        }
+        mysqli_stmt_close($rec_add);
+
+        // przelicza średnią ocenę produktu
+        $avg_q = mysqli_query($conn, "SELECT AVG(ocena) as avg_ocena FROM recenzje WHERE id_produktu = $prod_id");
+        if ($avg_q && ($avg = mysqli_fetch_assoc($avg_q))) {
+            $avg_ocena = round($avg['avg_ocena'], 1);
+            mysqli_query($conn, "UPDATE produkty SET ocena = $avg_ocena WHERE id = $prod_id");
+        }
+
+        header("Location: product_card.php?id=$prod_id&rec=1");
+        exit;
+    }
+    mysqli_stmt_close($rec_check);
+}
 ?>
 <!DOCTYPE html>
 <html lang="pl">
@@ -293,7 +343,7 @@ $gallery = [$product['img_path']];
                             <a class="nav-link mx-lg-2" href="#">Kontakt</a>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="button-1 mx-lg-2 my-2 my-lg-0"><i class="bi bi-cart"></i></a>
+                            <a href="../shopping_cart/shopping_cart.php" class="button-1 mx-lg-2 my-2 my-lg-0"><i class="bi bi-cart"></i></a>
                         </li>
 
                     </ul>
@@ -343,7 +393,7 @@ $gallery = [$product['img_path']];
                         <div class="col-md-6">
                             <div class="product-zalando-title"><?= htmlspecialchars($product['nazwa']) ?></div>
                             <div class="product-zalando-subtitle"><?= htmlspecialchars($product['opis']) ?></div>
-                            <div class="product-zalando-rating">
+                            <div class="product-zalando-rating" id="showReviewForm" style="cursor:pointer;" title="Kliknij, aby dodać recenzję">
                                 <?php
                                 $rating = (float) $product['ocena'];
                                 for ($i = 1; $i <= 5; $i++) {
@@ -358,6 +408,32 @@ $gallery = [$product['img_path']];
                                 ?>
                                 <span class="text-muted ms-2" style="font-size:13px;">(<?= $rating ?>)</span>
                             </div>
+                            <?php if (isset($_SESSION['user']['id'])): ?>
+                                <?php
+                                // Sprawdź, czy użytkownik już dodał recenzję
+                                $user_id = (int)$_SESSION['user']['id'];
+                                $prod_id = (int)$id;
+                                $rec_res = mysqli_query($conn, "SELECT id FROM recenzje WHERE id_uzytkownika=$user_id AND id_produktu=$prod_id");
+                                if (mysqli_num_rows($rec_res) == 0):
+                                ?>
+                                    <form method="post" class="mb-4" id="reviewForm" style="display:none;">
+                                        <div class="mb-2">
+                                            <label class="form-label">Twoja ocena:</label>
+                                            <div>
+                                                <?php for ($i = 1; $i <= 5; $i++): ?>
+                                                    <input type="radio" class="btn-check" name="ocena" id="star<?= $i ?>" value="<?= $i ?>" <?= $i==5?'checked':'' ?>>
+                                                    <label class="btn btn-sm btn-outline-warning" for="star<?= $i ?>"><i class="bi bi-star-fill"></i></label>
+                                                <?php endfor; ?>
+                                            </div>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label class="form-label">Twoja recenzja:</label>
+                                            <textarea name="tresc" class="form-control" rows="3" required></textarea>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Dodaj recenzję</button>
+                                    </form>
+                                <?php endif; ?>
+                            <?php endif; ?>
                             <div class="mb-2">
                                 <span
                                     class="product-zalando-price"><?= number_format($product['cena'] * (1 - $product['znizka'] / 100), 2) ?>
@@ -414,8 +490,13 @@ $gallery = [$product['img_path']];
                                     <option>XL</option>
                                 </select>
                             </div>
-                            <button class="product-zalando-btn-main"><i class="bi bi-cart-plus"></i> Dodaj do
-                                koszyka</button>
+                            <form method="post" action="../shopping_cart/add_to_cart.php" class="mb-2">
+                                <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
+                                <input type="hidden" name="quantity" value="1">
+                                <button type="submit" class="product-zalando-btn-main">
+                                    <i class="bi bi-cart-plus"></i> Dodaj do koszyka
+                                </button>
+                            </form>
                             <button class="product-zalando-btn-wishlist"><i class="bi bi-heart"></i></button>
                             <div class="product-zalando-info mt-3">
                                 <i class="bi bi-truck"></i> Wysyłamy do 5-6 dni roboczych, zależności od lokalizacji.
@@ -465,6 +546,43 @@ $gallery = [$product['img_path']];
                                     </div>
                                 </div>
                             </div>
+                            <div class="mt-4">
+                                <h5 class="mb-3" style="font-weight:700;">Recenzje produktu</h5>
+                                <?php
+                                // DEBUG: pokaż id produktu z URL i z bazy
+                                echo "<!-- id z URL: $id, id z bazy: {$product['id']} -->";
+                                // Używaj $id z URL, nie $product['id']
+                                $rec_q = mysqli_query($conn, "SELECT r.*, u.imie_nazwisko FROM recenzje r JOIN uzytkownik u ON r.id_uzytkownika=u.id WHERE r.id_produktu=" . (int)$id . " ORDER BY r.data DESC");
+                                if (!$rec_q) {
+                                    echo "<div class='alert alert-danger'>Błąd SQL: " . htmlspecialchars(mysqli_error($conn)) . "</div>";
+                                }
+                                echo "<!-- Liczba recenzji: " . mysqli_num_rows($rec_q) . " -->";
+                                if (mysqli_num_rows($rec_q) > 0):
+                                    while ($rec = mysqli_fetch_assoc($rec_q)):
+                                ?>
+                                    <div class="d-flex flex-row align-items-start mb-3" style="gap:12px;">
+                                        <div style="width:44px;height:44px;border-radius:50%;background:#e5e7eb;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;color:#555;">
+                                            <?= mb_substr(htmlspecialchars($rec['imie_nazwisko']), 0, 1) ?>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <div class="d-flex align-items-center mb-1">
+                                                <span style="font-weight:600;"><?= htmlspecialchars($rec['imie_nazwisko']) ?></span>
+                                                <span class="ms-3 text-warning" style="font-size:15px;">
+                                                    <?php for ($i = 1; $i <= 5; $i++): ?>
+                                                        <i class="bi <?= $i <= $rec['ocena'] ? 'bi-star-fill' : 'bi-star' ?>"></i>
+                                                    <?php endfor; ?>
+                                                </span>
+                                                <span class="ms-auto text-muted" style="font-size:13px;"><?= htmlspecialchars($rec['data']) ?></span>
+                                            </div>
+                                            <div style="background:#f8f9fa;border-radius:8px;padding:10px 14px;font-size:1.05rem;">
+                                                <?= nl2br(htmlspecialchars($rec['tresc'])) ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php endwhile; else: ?>
+                                    <div class="text-muted">Brak recenzji dla tego produktu.</div>
+                                <?php endif; ?>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -485,6 +603,7 @@ $gallery = [$product['img_path']];
                         ?>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
@@ -495,6 +614,20 @@ $gallery = [$product['img_path']];
             document.querySelectorAll('.product-gallery-thumb').forEach(t => t.classList.remove('active'));
             el.classList.add('active');
         }
+
+        // Pokazuj formularz recenzji po kliknięciu na ocenę
+        document.addEventListener('DOMContentLoaded', function() {
+            var rating = document.getElementById('showReviewForm');
+            var form = document.getElementById('reviewForm');
+            if (rating && form) {
+                rating.addEventListener('click', function() {
+                    form.style.display = (form.style.display === 'none' || form.style.display === '') ? 'block' : 'none';
+                    if (form.style.display === 'block') {
+                        form.scrollIntoView({behavior: "smooth", block: "center"});
+                    }
+                });
+            }
+        });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-..."
         crossorigin="anonymous"></script>

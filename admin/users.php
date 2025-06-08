@@ -4,6 +4,7 @@ include '../adminDashboard/head.php';
 include '../adminDashboard/sidebar.php';
 require_once("../misc/database.php");
 
+
 // Pobierz listę uprawnień
 $permissions = [];
 $perm_result = mysqli_query($conn, "SELECT id, uprawnienia FROM uprawnienia");
@@ -17,7 +18,22 @@ $users_result = mysqli_query($conn, "SELECT u.id, u.imie_nazwisko, u.email, u.up
 <div id="page-content-wrapper">
     <nav class="navbar navbar-expand-lg navbar-light bg-transparent py-4 px-4">
         <div class="d-flex align-items-center">
-            <h2 class="fs-2 m-0">Użytkownicy</h2>
+            <i class="fas fa-align-left primary-text fs-4 me-3 switch" id="menu-toggle"></i>
+            <h2 class="fs-2 m-0 switch">Użytkownicy</h2>
+        </div>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 fw-bold second-text text-dark"> 
+                <i class="fas fa-user me-2"></i>
+                <?php if (isset($_SESSION["user"])): ?>
+                    <?= htmlspecialchars($_SESSION["user"]["imie_nazwisko"]) ?>
+                <?php endif; ?>
+            </ul>
         </div>
     </nav>
     <div class="container-fluid px-4">

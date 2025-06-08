@@ -1,10 +1,5 @@
 <?php
-session_start();
-require_once("../misc/database.php");
-if (!isset($_SESSION["user"]) || $_SESSION["user"]["uprawnienia_id"] != 1) {
-    header("Location: ../index.php");
-    exit();
-}
+if (session_status() === PHP_SESSION_NONE) session_start();
 ?>
 <!DOCTYPE html>
 <html lang="en">
