@@ -459,8 +459,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['user']['id'], $_PO
                                         <div id="collapseMaterial" class="accordion-collapse collapse"
                                             aria-labelledby="headingMaterial" data-bs-parent="#productAccordion">
                                             <div class="accordion-body">
-                                                <!-- Tu możesz dodać dynamiczne dane z bazy, np. $product['material'] -->
-                                                100% bawełna. Prać w 30°C. Nie wybielać.
+                                                lorem ipsum
                                             </div>
                                         </div>
                                     </div>
@@ -475,11 +474,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['user']['id'], $_PO
                                         <div id="collapseDetails" class="accordion-collapse collapse"
                                             aria-labelledby="headingDetails" data-bs-parent="#productAccordion">
                                             <div class="accordion-body">
-                                                <!-- Tu możesz dodać dynamiczne dane z bazy, np. $product['szczegoly'] -->
+                                                <!-- jak bedzie to dodam -->
                                                 <ul class="mb-0">
-                                                    <li>Wyprodukowano w Polsce</li>
-                                                    <li>Unisex</li>
-                                                    <li>Sezon: Wiosna/Lato</li>
+                                                    <li>lorem ipsum</li>
                                                 </ul>
                                             </div>
                                         </div>
