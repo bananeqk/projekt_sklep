@@ -43,12 +43,12 @@ if (isset($_GET['id'])) {
         <div class="mb-3">
             <label for="caption_title" class="form-label">Tytuł</label>
             <input type="text" name="caption_title" id="caption_title" class="form-control"
-                value="<?= htmlspecialchars($row['caption_title']) ?>">
+                value="<?= htmlspecialchars($row['img_tytul']) ?>">
         </div>
         <div class="mb-3">
             <label for="caption_text" class="form-label">Opis</label>
             <input type="text" name="caption_text" id="caption_text" class="form-control"
-                value="<?= htmlspecialchars($row['caption_text']) ?>">
+                value="<?= htmlspecialchars($row['img_tekst']) ?>">
         </div>
         <a href="form_carousel.php">
             <button type="submit" class="btn btn-primary">Zapisz zmiany</button>
