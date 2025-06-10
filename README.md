@@ -1,1 +1,1 @@
-mauczi nygusie naucz sie korzystac z gita
+Skibidi Firma projekt na aplikacje internetowe
