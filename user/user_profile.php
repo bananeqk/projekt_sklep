@@ -19,21 +19,6 @@ if (!isset($_SESSION["user"]["id"])) {
     <?php include '../structure/cart_structure/nav.php'; ?>
     <div class="container mt-3 mb-4">
         <div class="d-flex justify-content-end">
-            <div class="dropdown">
-                <a href="#" class="btn btn-outline-dark rounded-circle dropdown-toggle" id="userDropdown"
-                    data-bs-toggle="dropdown" aria-expanded="false" title="Konto">
-                    <i class="bi bi-person-fill"></i>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                    <li><a class="dropdown-item" href="user_profile.php"><i class="bi bi-person"></i> Panel
-                            użytkownika</a></li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li><a class="dropdown-item text-danger" href="../logowanie/logout.php"><i
-                                class="bi bi-box-arrow-right"></i> Wyloguj się</a></li>
-                </ul>
-            </div>
         </div>
         <?php if (isset($_GET['pwdmsg']) && $_GET['pwdmsg']): ?>
             <div class="alert alert-dismissible fade show alert-warning shadow-sm mt-3" role="alert"
@@ -199,7 +184,7 @@ if (!isset($_SESSION["user"]["id"])) {
                                                 $log_page = isset($_GET['log_page']) ? max(1, (int) $_GET['log_page']) : 1;
                                                 $offset = ($log_page - 1) * $per_page;
 
-                                                $log_count_stmt = mysqli_prepare($conn, "SELECT COUNT(*) as cnt FROM user_activity_log WHERE user_id=?");
+                                                $log_count_stmt = mysqli_prepare($conn, "SELECT COUNT(*) as cnt FROM dziennik WHERE user_id=?");
                                                 mysqli_stmt_bind_param($log_count_stmt, "i", $uid);
                                                 mysqli_stmt_execute($log_count_stmt);
                                                 $log_count_res = mysqli_stmt_get_result($log_count_stmt);
@@ -207,7 +192,7 @@ if (!isset($_SESSION["user"]["id"])) {
                                                 $log_pages = max(1, ceil($log_count / $per_page));
                                                 mysqli_stmt_close($log_count_stmt);
 
-                                                $log_stmt = mysqli_prepare($conn, "SELECT action, details, created_at FROM user_activity_log WHERE user_id=? ORDER BY created_at DESC LIMIT ? OFFSET ?");
+                                                $log_stmt = mysqli_prepare($conn, "SELECT akcja, detale, data_stworzenia FROM dziennik WHERE user_id=? ORDER BY data_stworzenia DESC LIMIT ? OFFSET ?");
                                                 mysqli_stmt_bind_param($log_stmt, "iii", $uid, $per_page, $offset);
                                                 mysqli_stmt_execute($log_stmt);
                                                 $log_res = mysqli_stmt_get_result($log_stmt);
@@ -215,14 +200,14 @@ if (!isset($_SESSION["user"]["id"])) {
                                                 <?php if (mysqli_num_rows($log_res) > 0): ?>
                                                     <?php while ($log = mysqli_fetch_assoc($log_res)): ?>
                                                         <div class="activity-item mb-3">
-                                                            <h6 class="mb-1"><?= htmlspecialchars($log['action']) ?></h6>
-                                                            <?php if ($log['details']): ?>
+                                                            <h6 class="mb-1"><?= htmlspecialchars($log['akcja']) ?></h6>
+                                                            <?php if ($log['detale']): ?>
                                                                 <div class="text-muted small mb-1">
-                                                                    <?= htmlspecialchars($log['details']) ?>
+                                                                    <?= htmlspecialchars($log['detale']) ?>
                                                                 </div>
                                                             <?php endif; ?>
                                                             <p class="text-muted small mb-0">
-                                                                <?= htmlspecialchars($log['created_at']) ?>
+                                                                <?= htmlspecialchars($log['data_stworzenia']) ?>
                                                             </p>
                                                         </div>
                                                     <?php endwhile; ?>
@@ -296,7 +281,7 @@ if (!isset($_SESSION["user"]["id"])) {
             </div>
         </div>
     </div>
-    <?= include '../structure/footer.php'; ?>
+    <?php include '../structure/footer.php'; ?>
 </body>
 
 </html>

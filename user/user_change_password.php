@@ -34,7 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Dodaj wpis do dziennika aktywności
     $action = "Zmiana hasła";
     $details = "Hasło zostało zmienione";
-    $log_stmt = mysqli_prepare($conn, "INSERT INTO user_activity_log (user_id, action, details) VALUES (?, ?, ?)");
+    $log_stmt = mysqli_prepare($conn, "INSERT INTO dziennik (user_id, akcja, detale) VALUES (?, ?, ?)");
     mysqli_stmt_bind_param($log_stmt, "iss", $uid, $action, $details);
     mysqli_stmt_execute($log_stmt);
 

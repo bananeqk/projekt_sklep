@@ -20,7 +20,7 @@ if (isset($_SESSION["user"])) {
   crossorigin="anonymous"></script>
 <nav class="navbar navbar-expand-lg fixed-top bg-light">
   <div class="container-fluid">
-    <a class="navbar-brand me-auto m-2" href="#">
+    <a class="navbar-brand me-auto m-2" href="index.php">
       <img src="zdjecia/logo/sklep_logo.png" width="70px">
     </a>
     <div class="offcanvas offcanvas-end" tabindex="2" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">

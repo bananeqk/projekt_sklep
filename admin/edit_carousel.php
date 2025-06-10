@@ -10,7 +10,7 @@ if (!isset($_SESSION["user"]["uprawnienia_id"]) || $_SESSION["user"]["uprawnieni
 if (isset($_GET['id'])) {
     $id = (int)$_GET['id'];
 
-    // Sprawdzenie, czy wpis istnieje
+    // sprawdzenie, czy wpis o podanym ID istnieje
     $check = mysqli_prepare($conn, "SELECT * FROM karuzela WHERE id = ?");
     mysqli_stmt_bind_param($check, "i", $id);
     mysqli_stmt_execute($check);

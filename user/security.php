@@ -19,21 +19,6 @@ if (!isset($_SESSION["user"]["id"])) {
     <?php include '../structure/cart_structure/nav.php'; ?>
     <div class="container mt-3 mb-4">
         <div class="d-flex justify-content-end">
-            <div class="dropdown">
-                <a href="#" class="btn btn-outline-dark rounded-circle dropdown-toggle" id="userDropdown"
-                    data-bs-toggle="dropdown" aria-expanded="false" title="Konto">
-                    <i class="bi bi-person-fill"></i>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                    <li><a class="dropdown-item" href="user_profile.php"><i class="bi bi-person"></i> Panel użytkownika</a>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li><a class="dropdown-item text-danger" href="../logowanie/logout.php"><i class="bi bi-box-arrow-right"></i>
-                            Wyloguj się</a></li>
-                </ul>
-            </div>
         </div>
         <?php if (isset($_GET['pwdmsg']) && $_GET['pwdmsg']): ?>
             <div class="alert alert-dismissible fade show alert-warning shadow-sm mt-3" role="alert"
@@ -113,7 +98,7 @@ if (!isset($_SESSION["user"]["id"])) {
             </div>
         </div>
     </div>
-    <?= include '../structure/footer.php'; ?>
+    <?php include '../structure/footer.php'; ?>
 </body>
 
 </html>

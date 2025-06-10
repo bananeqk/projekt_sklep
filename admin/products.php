@@ -44,7 +44,6 @@ if (!isset($_SESSION["user"]["uprawnienia_id"]) || $_SESSION["user"]["uprawnieni
                     <div class="alert alert-success">Zdjęcie zostało usunięte.</div>
                 <?php endif; ?>
                 <div class="col-lg-8">
-                    <!-- Formularz dodawania produktu -->
                     <div class="carousel-card shadow-sm border-0 rounded-4">
                         <h4 class="carousel-form-title text-center">Dodaj nowy produkt</h4>
                         <form action="update_product.php" method="post" enctype="multipart/form-data" class="carousel-form">
@@ -85,7 +84,7 @@ if (!isset($_SESSION["user"]["uprawnienia_id"]) || $_SESSION["user"]["uprawnieni
                                 <label for="product_color" class="form-label">Kolor</label>
                                 <select name="product_color" id="product_color" class="form-control">
                                     <?php
-                                    // Pobierz kolory z tabeli kolory
+                                    // Ppobieranie koloru
                                     $color_result = mysqli_query($conn, "SELECT id, kolor FROM kolory");
                                     while ($color = mysqli_fetch_assoc($color_result)) {
                                         $val = htmlspecialchars($color['id']);
@@ -101,11 +100,10 @@ if (!isset($_SESSION["user"]["uprawnienia_id"]) || $_SESSION["user"]["uprawnieni
                             </div>
                         </form>
                     </div>
-                    <!-- Lista produktów -->
                     <div class="card shadow-sm border-0 rounded-4 mt-4">
                         <div class="card-body">
                             <h5 class="fw-bold text-secondary mb-3">Lista produktów</h5>
-                            <!-- Wyszukiwarka po nazwie produktu -->
+                            <!-- wyszukiwarka po nazwie produktu -->
                             <form method="get" class="mb-3 d-flex gap-2">
                                 <input type="text" name="search" class="form-control" placeholder="Szukaj po nazwie..." value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>">
                                 <button type="submit" class="btn btn-outline-dark">Szukaj</button>
@@ -128,6 +126,7 @@ if (!isset($_SESSION["user"]["uprawnienia_id"]) || $_SESSION["user"]["uprawnieni
                                     LEFT JOIN kategorie k ON p.id_kategorii = k.id
                                     LEFT JOIN kolory c ON p.kolor_id = c.id
                                     $where";
+                            // ten na dole warunek sprawdza czy cos zostalo wpisane w wyszukiwarke no jesli nie to normalnie pokazuje wszystkie produkty
                             if ($where) {
                                 $stmt = mysqli_prepare($conn, $sql);
                                 mysqli_stmt_bind_param($stmt, $types, ...$params);
@@ -168,7 +167,7 @@ if (!isset($_SESSION["user"]["uprawnienia_id"]) || $_SESSION["user"]["uprawnieni
                                                 <td class="text-center"><?= htmlspecialchars($row['ocena']) ?></td>
                                                 <td class="text-center"><?= htmlspecialchars($row['kolor'] ?? '') ?></td>
                                                 <td class="text-center">
-                                                    <a href="edit_product.php?id=<?= $row['id'] ?>" class="btn btn-primary btn-sm">
+                                                    <a href="edit_product.php?id=<?= $row['id'] ?>" class="btn btn-dark btn-sm">
                                                         <i class="fas fa-edit"></i> Edytuj
                                                     </a>
                                                     <a href="delete_product.php?id=<?= $row['id'] ?>" class="btn btn-danger btn-sm"

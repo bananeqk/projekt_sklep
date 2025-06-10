@@ -2,7 +2,6 @@
 session_start();
 require_once("../misc/database.php");
 
-// Zabezpieczenie: tylko admin (uprawnienia_id == 2)
 if (!isset($_SESSION["user"]["uprawnienia_id"]) || $_SESSION["user"]["uprawnienia_id"] != 2) {
     header("Location: ../index.php");
     exit;
@@ -91,7 +90,6 @@ if (!isset($_SESSION["user"]["uprawnienia_id"]) || $_SESSION["user"]["uprawnieni
                                                     case 2:
                                                         $role = 'Administrator';
                                                         break;
-                                                    // Dodaj kolejne role jeśli masz
                                                     default:
                                                         $role = 'Nieznana rola';
                                                 }

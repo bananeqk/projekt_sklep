@@ -3,7 +3,7 @@ session_start();
 require_once("misc/database.php");
 
 $carouselImages = [];
-$result = mysqli_query($conn, "SELECT img_path, caption_title, caption_text FROM karuzela ORDER BY id DESC");
+$result = mysqli_query($conn, "SELECT img_sciezka, img_tytul, img_tekst FROM karuzela ORDER BY id DESC");
 if ($result) {
   while ($row = mysqli_fetch_assoc($result)) {
     $carouselImages[] = $row;
@@ -22,7 +22,6 @@ if ($result) {
 <body>
   <?php include 'structure/nav.php'; ?>
 
-  <!--Karuzela możliwość dodawania do galerii zdjęć za pomocą panelu admina w zakładce Karuzela-->
   <main>
     <div id="mainpage-carousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="2500">
       <div class="carousel-inner">
@@ -30,15 +29,15 @@ if ($result) {
           <?php foreach ($carouselImages as $i => $img): ?>
             <div class="carousel-item c-item<?php if ($i === 0)
               echo ' active'; ?>">
-              <img class="d-block w-100 c-img img-fluid" src="carousel/<?php echo htmlspecialchars($img['img_path']); ?>"
+              <img class="d-block w-100 c-img img-fluid" src="zdjecia/carousel/<?php echo htmlspecialchars($img['img_sciezka']); ?>"
                 alt="Slide <?php echo $i + 1; ?>">
-              <?php if ($img['caption_title'] || $img['caption_text']): ?>
+              <?php if ($img['img_tytul'] || $img['img_tekst']): ?>
                 <div class="carousel-caption top-50 mt-0 carousel-text-top">
-                  <?php if ($img['caption_text']): ?>
-                    <p class="m-1"><?php echo htmlspecialchars($img['caption_text']); ?></p>
+                  <?php if ($img['img_tekst']): ?>
+                    <p class="m-1"><?php echo htmlspecialchars($img['img_tekst']); ?></p>
                   <?php endif; ?>
-                  <?php if ($img['caption_title']): ?>
-                    <h1 class="fw-bolder carousel-text"><?php echo htmlspecialchars($img['caption_title']); ?></h1>
+                  <?php if ($img['img_tytul']): ?>
+                    <h1 class="fw-bolder carousel-text"><?php echo htmlspecialchars($img['img_tytul']); ?></h1>
                   <?php endif; ?>
                 </div>
               <?php endif; ?>
@@ -60,13 +59,6 @@ if ($result) {
       </button>
     </div>
   </main>
-
-
-
-
-
-
-  <!--Sekcja informacji o firmie, możliwość dodawania dodatkowych kart za pomocą panelu admina w zakładce Informacje -->
   <section>
     <div class="container p-5">
       <div class="row g-5 mt-2">
@@ -143,7 +135,7 @@ if ($result) {
     <div class="container py-5">
       <div class="row row-cols-1 row-cols-md-3 g-4">
         <?php
-        // Pobierz 3 losowe produkty z katalogu
+        // 3 losowe produkty z bazy danych
         $prod_res = mysqli_query($conn, "SELECT id, nazwa, opis, cena, znizka, ocena, img_path FROM produkty ORDER BY RAND() LIMIT 3");
         while ($prod = mysqli_fetch_assoc($prod_res)):
         ?>

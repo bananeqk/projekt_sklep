@@ -14,7 +14,6 @@ if (!$product) {
     exit;
 }
 
-// Pobierz kategorie i kolory
 $cat_result = mysqli_query($conn, "SELECT id, kategoria FROM kategorie");
 $color_result = mysqli_query($conn, "SELECT id, kolor FROM kolory");
 ?>

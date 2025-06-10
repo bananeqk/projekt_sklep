@@ -40,7 +40,7 @@ if (!isset($_SESSION["user"]["uprawnienia_id"]) || $_SESSION["user"]["uprawnieni
     <div class="container py-5">
         <h2 class="mb-4"><i class="fas fa-envelope-open-text me-2"></i>Wiadomości od użytkowników</h2>
         <?php
-        $res = mysqli_query($conn, "SELECT * FROM contact_messages ORDER BY data_stworzenia DESC");
+        $res = mysqli_query($conn, "SELECT * FROM wiadomosci ORDER BY data_stworzenia DESC");
         if (mysqli_num_rows($res) > 0):
             while ($row = mysqli_fetch_assoc($res)):
                 ?>

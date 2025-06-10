@@ -91,12 +91,12 @@ if (!isset($_SESSION["user"]["uprawnienia_id"]) || $_SESSION["user"]["uprawnieni
                                     <?php while ($row = mysqli_fetch_assoc($result)) { ?>
                                         <tr>
                                             <td class="text-center"><?= htmlspecialchars($row['id']) ?></td>
-                                            <td class="text-center"><img src="../carousel/<?php echo $row['img_path'] ?>"
+                                            <td class="text-center"><img src="../zdjecia/carousel/<?php echo $row['img_sciezka'] ?>"
                                                     width="120px" class="carousel-img-darken">
                                             </td>
-                                            <td class="text-center"><?= htmlspecialchars($row['caption_title']) ?>
+                                            <td class="text-center"><?= htmlspecialchars($row['img_tytul']) ?>
                                             </td>
-                                            <td class="text-center"><?= htmlspecialchars($row['caption_text']) ?>
+                                            <td class="text-center"><?= htmlspecialchars($row['img_tekst']) ?>
                                             </td>
                                             <td class="text-center">
                                                 <a href="edit_carousel.php?id=<?= $row['id'] ?>"

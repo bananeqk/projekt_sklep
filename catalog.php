@@ -112,11 +112,10 @@ $cart_count = isset($_SESSION['cart']) ? array_sum($_SESSION['cart']) : 0;
                         </div>
                     </form>
                 </div>
-                <!-- Product Grid -->
                 <div class="col-lg-9">
                     <div class="row g-4">
                         <?php
-                        // Budowanie zapytania SQL z filtrami
+                        // filtrowanie zapytan
                         $where = [];
                         if (isset($_GET['category']) && is_numeric($_GET['category'])) {
                             $where[] = "id_kategorii = " . intval($_GET['category']);
@@ -132,7 +131,7 @@ $cart_count = isset($_SESSION['cart']) ? array_sum($_SESSION['cart']) : 0;
                         }
                         $where_sql = $where ? "WHERE " . implode(" AND ", $where) : "";
 
-                        // Sortowanie
+                        // sortowanie produktow
                         $order = "ORDER BY id DESC";
                         if (isset($_GET['sort'])) {
                             if ($_GET['sort'] == 'price_asc')
@@ -190,7 +189,6 @@ $cart_count = isset($_SESSION['cart']) ? array_sum($_SESSION['cart']) : 0;
                                             </span>
                                         </div>
                                         <small class="text-secondary">Cena regularna: <?= $price ?> zł</small>
-                                        <!-- Przycisk dodawania do koszyka (zawsze 1 sztuka) -->
                                         <form method="post" action="shopping_cart/add_to_cart.php" class="mt-2">
                                             <input type="hidden" name="product_id" value="<?= $row['id'] ?>">
                                             <input type="hidden" name="quantity" value="1">

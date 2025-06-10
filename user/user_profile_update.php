@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once(dirname(__DIR__) . "/misc/database.php");
+require_once("../misc/database.php");
 if (!isset($_SESSION["user"]["id"])) {
     header("Location: /projekt_sklep/user/user_profile.php");
     exit;
@@ -9,9 +9,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $user_id = (int)$_SESSION["user"]["id"];
     $phone = isset($_POST["telefon"]) ? str_replace(' ', '', trim($_POST["telefon"])) : '';
     $email = isset($_POST["email"]) ? trim($_POST["email"]) : '';
-    $log_stmt = mysqli_prepare($conn, "INSERT INTO user_activity_log (user_id, action, details) VALUES (?, ?, ?)");
+    $log_stmt = mysqli_prepare($conn, "INSERT INTO dziennik (user_id, akcja, detale) VALUES (?, ?, ?)");
 
-    // Sprawdź czy email się zmienił
+    // sprawdzanie czy email sie zmienil
     if ($email !== '' && $email !== $_SESSION["user"]["email"]) {
         $stmt = mysqli_prepare($conn, "UPDATE uzytkownik SET email=?, telefon=? WHERE id=?");
         mysqli_stmt_bind_param($stmt, "ssi", $email, $phone, $user_id);
@@ -28,7 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         mysqli_stmt_bind_param($stmt, "si", $phone, $user_id);
         mysqli_stmt_execute($stmt);
         $_SESSION["user"]["telefon"] = $phone;
-        // Logowanie zmiany telefonu
+        // zmiana telefonu
         $action = "Zmiana telefonu";
         $details = "Nowy numer: $phone";
         mysqli_stmt_bind_param($log_stmt, "iss", $user_id, $action, $details);
