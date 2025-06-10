@@ -1,9 +1,21 @@
 <?php
 session_start();
 require_once("../misc/database.php");
-include '../adminDashboard/head.php';
-include '../adminDashboard/sidebar.php';
+
+if (!isset($_SESSION["user"]["uprawnienia_id"]) || $_SESSION["user"]["uprawnienia_id"] != 2) {
+    header("Location: ../index.php");
+    exit;
+}
 ?>
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <?php include("../structure/admin/head.php"); ?>
+    <title>Document</title>
+</head>
+<body>
+    <?php include("../structure/admin/sidebar.php"); ?>
+<div id="wrapper">
 <div id="page-content-wrapper">
     <nav class="navbar navbar-expand-lg navbar-light bg-transparent py-4 px-4">
         <div class="d-flex align-items-center">
@@ -17,7 +29,7 @@ include '../adminDashboard/sidebar.php';
         </button>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 fw-bold second-text text-dark"> 
                 <i class="fas fa-user me-2"></i>
                 <?php if (isset($_SESSION["user"])): ?>
                     <?= htmlspecialchars($_SESSION["user"]["imie_nazwisko"]) ?>
@@ -80,7 +92,7 @@ include '../adminDashboard/sidebar.php';
                                         <tr>
                                             <td class="text-center"><?= htmlspecialchars($row['id']) ?></td>
                                             <td class="text-center"><img src="../carousel/<?php echo $row['img_path'] ?>"
-                                                    width="120px">
+                                                    width="120px" class="carousel-img-darken">
                                             </td>
                                             <td class="text-center"><?= htmlspecialchars($row['caption_title']) ?>
                                             </td>
@@ -106,16 +118,7 @@ include '../adminDashboard/sidebar.php';
     </div>
 </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    var el = document.getElementById("wrapper");
-    var toggleButton = document.getElementById("menu-toggle");
-    if (toggleButton) {
-        toggleButton.onclick = function () {
-            el.classList.toggle("toggled");
-        };
-    }
-</script>
+<?php include "../structure/admin/script.php"; ?>
 </body>
 
 </html>

@@ -3,9 +3,9 @@ session_start();
 require_once("misc/database.php");
 
 $carouselImages = [];
-$result = $conn->query("SELECT img_path, caption_title, caption_text FROM karuzela ORDER BY id DESC");
+$result = mysqli_query($conn, "SELECT img_path, caption_title, caption_text FROM karuzela ORDER BY id DESC");
 if ($result) {
-  while ($row = $result->fetch_assoc()) {
+  while ($row = mysqli_fetch_assoc($result)) {
     $carouselImages[] = $row;
   }
 }
@@ -15,112 +15,16 @@ if ($result) {
 <html lang="pl">
 
 <head>
-  <meta charset="UTF-8">
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <link href="css/style.css" rel="stylesheet">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-  <link
-    href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&family=Syne:wght@400..800&display=swap"
-    rel="stylesheet">
-
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
-
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-
+  <?php include 'structure/header.php'; ?>
   <title>Main - strona</title>
 </head>
 
 <body>
-
-
-
-
-
-
-  <!--Skrypty bootstrapa do uruchomienia m.in. karuzeli-->
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-..."
-    crossorigin="anonymous"></script>
-
-
-
-
-
-
-
-
-
-  <!--Nawigacja-->
-  <nav class="navbar navbar-expand-lg fixed-top bg-light">
-    <div class="container-fluid">
-      <a class="navbar-brand me-auto m-2" href="#">
-        <img src="zdjecia/sklep_logo.png" width="70px">
-      </a>
-      <div class="offcanvas offcanvas-end" tabindex="2" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
-        <div class="offcanvas-header">
-          <h5 class="offcanvas-title" id="offcanvasNavbarLabel">
-            <img src="zdjecia/sklep_logo.png" width="70px">
-          </h5>
-          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body">
-          <ul class="navbar-nav justify-content-center flex-grow-1 pe-3 align-items-center">
-            <li class="nav-item">
-              <a class="nav-link mx-lg-2" aria-current="page" href="#">Strona główna</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link mx-lg-2" href="#">Katalog</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link mx-lg-2" href="#">O firmie</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link mx-lg-2" href="#">Kontakt</a>
-            </li>
-            <li class="nav-item">
-              <a href="#" class="button-1 mx-lg-2 my-2 my-lg-0"><i class="bi bi-cart"></i></a>
-            </li>
-
-          </ul>
-        </div>
-      </div>
-
-      <?php if (isset($_SESSION["user"])): ?>
-        <!-- Jeśli użytkownik ma uprawnienia_id = 1 -->
-        <?php if ($_SESSION["user"]["uprawnienia_id"] == 1): ?>
-          <a href="uzytkownik_panel.php" class="button-1"><i class="bi bi-person-fill"></i></a>
-        <?php endif; ?>
-
-        <?php if ($_SESSION["user"]["uprawnienia_id"] == 2): ?>
-          <a href="admin/profile.php" class="btn btn-danger"><i class="bi bi-person-fill"></i></a>
-        <?php endif; ?>
-
-      <?php else: ?>
-        <a href="logowanie/log.php" class="button-1">Zaloguj się</a>
-      <?php endif; ?>
-
-      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
-        aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-    </div>
-  </nav>
-
-
-
-
-
-
+  <?php include 'structure/nav.php'; ?>
 
   <!--Karuzela możliwość dodawania do galerii zdjęć za pomocą panelu admina w zakładce Karuzela-->
   <main>
-    <div id="mainpage-carousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="2000">
+    <div id="mainpage-carousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="2500">
       <div class="carousel-inner">
         <?php if (!empty($carouselImages)): ?>
           <?php foreach ($carouselImages as $i => $img): ?>
@@ -136,23 +40,23 @@ if ($result) {
                   <?php if ($img['caption_title']): ?>
                     <h1 class="fw-bolder carousel-text"><?php echo htmlspecialchars($img['caption_title']); ?></h1>
                   <?php endif; ?>
-                  <!-- Możesz dodać przycisk jeśli chcesz -->
                 </div>
               <?php endif; ?>
             </div>
           <?php endforeach; ?>
         <?php else: ?>
-          <!-- Fallback: przykładowe zdjęcie jeśli brak w bazie -->
           <div class="carousel-item active c-item">
             <img class="d-block w-100 c-img img-fluid" src="zdjecia/blackjack_table.png" alt="First slide">
           </div>
         <?php endif; ?>
       </div>
       <button class="carousel-control-prev" type="button" data-bs-target="#mainpage-carousel" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon"></span>
+        <span aria-hidden="true" class="carousel-control-prev-icon"></span>
+        <span class="visually-hidden">Poprzedni</span>
       </button>
       <button class="carousel-control-next" type="button" data-bs-target="#mainpage-carousel" data-bs-slide="next">
-        <span class="carousel-control-next-icon"></span>
+        <span aria-hidden="true" class="carousel-control-next-icon"></span>
+        <span class="visually-hidden">Następny</span>
       </button>
     </div>
   </main>
@@ -168,7 +72,7 @@ if ($result) {
       <div class="row g-5 mt-2">
         <div class="col-12 col-md-6 col-lg-4">
           <div class="card border-dark border-top-0">
-            <img src="zdjecia/storage.png" width="150px" class="card-img-top">
+            <img src="zdjecia/index/storage.png" width="150px" class="card-img-top">
             <div class="card-body">
               <h5 class="card-title text-center display-5">Nowoczesny Magazyn</h5>
               <p class="text-center card-text">
@@ -185,7 +89,7 @@ if ($result) {
 
         <div class="col-12 col-md-6 col-lg-4">
           <div class="card border-dark border-top-0">
-            <img src="zdjecia/delivery.png" width="150px" class="card-img-top">
+            <img src="zdjecia/index/delivery.png" width="150px" class="card-img-top">
             <div class="card-body">
               <h5 class="card-title text-center display-5">Szybka Dostawa</h5>
               <p class="card-text text-center">
@@ -202,7 +106,7 @@ if ($result) {
 
         <div class="col-12 col-md-6 col-lg-4">
           <div class="card border-dark border-top-0">
-            <img src="zdjecia/review.png" width="150px" class="card-img-top">
+            <img src="zdjecia/index/review.png" width="150px" class="card-img-top">
             <div class="card-body">
               <h5 class="card-title text-center display-5">4.2⭐ Opinii</h5>
               <p class="card-text text-center">
@@ -237,96 +141,54 @@ if ($result) {
       </div>
     </div>
     <div class="container py-5">
-      <div class="row">
-        <div class="col-md-4">
-          <div class="product-card shadow-sm">
+      <div class="row row-cols-1 row-cols-md-3 g-4">
+        <?php
+        // Pobierz 3 losowe produkty z katalogu
+        $prod_res = mysqli_query($conn, "SELECT id, nazwa, opis, cena, znizka, ocena, img_path FROM produkty ORDER BY RAND() LIMIT 3");
+        while ($prod = mysqli_fetch_assoc($prod_res)):
+        ?>
+        <div class="col d-flex">
+          <div class="product-card shadow-sm h-100 d-flex flex-column">
             <div class="position-relative">
-              <img src="zdjecia/test.avif" class="product-image w-100" alt="Product">
-              <span class="discount-badge">-20%</span>
-              <button class="wishlist-btn">
-                <i class="bi bi-heart"></i>
-              </button>
+              <a href="product_card.php?id=<?= $prod['id'] ?>">
+                <img src="zdjecia/produkty/<?= htmlspecialchars($prod['img_path']) ?>" class="product-image w-100" alt="<?= htmlspecialchars($prod['nazwa']) ?>">
+              </a>
+              <?php if ($prod['znizka'] > 0): ?>
+                <span class="discount-badge bg-danger text-white position-absolute top-0 start-0 m-2 px-2 py-1 rounded">
+                  -<?= (int)$prod['znizka'] ?>%
+                </span>
+              <?php endif; ?>
             </div>
-            <div class="p-3">
-              <h5 class="mb-1 header">The North Face</h5>
-              <h6 class="mb-1 header-child">- Wireless Headphones</h6>
+            <div class="p-3 flex-grow-1 d-flex flex-column">
+              <h5 class="mb-1 header"><?= htmlspecialchars($prod['nazwa']) ?></h5>
+              <h6 class="mb-1 header-child"><?= htmlspecialchars($prod['opis']) ?></h6>
               <div class="rating-stars mb-2">
-                <i class="bi bi-star-fill"></i>
-                <i class="bi bi-star-fill"></i>
-                <i class="bi bi-star-fill"></i>
-                <i class="bi bi-star-fill"></i>
-                <i class="bi bi-star-half"></i>
-                <span class="text-muted ms-2">(4.5)</span>
+                <?php
+                $ocena = (float)$prod['ocena'];
+                for ($i = 1; $i <= 5; $i++) {
+                  if ($ocena >= $i) echo '<i class="bi bi-star-fill"></i>';
+                  elseif ($ocena >= $i - 0.5) echo '<i class="bi bi-star-half"></i>';
+                  else echo '<i class="bi bi-star"></i>';
+                }
+                ?>
+                <span class="text-muted ms-2">(<?= number_format($ocena, 1) ?>)</span>
               </div>
-              <div class="d-flex justify-content-between align-items-center">
-                <span class="price">129.99 zł</span>
+              <div class="mt-auto">
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="price<?= $prod['znizka'] > 0 ? ' text-danger fw-bold' : '' ?>">
+                      <?= number_format($prod['cena'] * (1 - $prod['znizka']/100), 2) ?> zł
+                  </span>
+                </div>
+                <small class="text-secondary">Cena regularna: <?= number_format($prod['cena'], 2) ?> zł</small>
               </div>
-              <small class="text-secondary">Cena regularna: 129.99 zł</small>
             </div>
           </div>
         </div>
-
-        <div class="col-md-4">
-          <div class="product-card shadow-sm">
-            <div class="position-relative">
-              <img src="zdjecia/test.avif" class="product-image w-100" alt="Product">
-              <span class="discount-badge">-20%</span>
-              <button class="wishlist-btn">
-                <i class="bi bi-heart"></i>
-              </button>
-            </div>
-            <div class="p-3">
-              <h5 class="mb-1 header">The North Face</h5>
-              <h6 class="mb-1 header-child">- Wireless Headphones</h6>
-              <div class="rating-stars mb-2">
-                <i class="bi bi-star-fill"></i>
-                <i class="bi bi-star-fill"></i>
-                <i class="bi bi-star-fill"></i>
-                <i class="bi bi-star-fill"></i>
-                <i class="bi bi-star-half"></i>
-                <span class="text-muted ms-2">(4.5)</span>
-              </div>
-              <div class="d-flex justify-content-between align-items-center">
-                <span class="price">129.99 zł</span>
-              </div>
-              <small class="text-secondary">Cena regularna: 129.99 zł</small>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-4">
-          <div class="product-card shadow-sm">
-            <div class="position-relative">
-              <img src="zdjecia/test.avif" class="product-image w-100" alt="Product">
-              <span class="discount-badge">-20%</span>
-              <button class="wishlist-btn">
-                <i class="bi bi-heart"></i>
-              </button>
-            </div>
-            <div class="p-3">
-              <h5 class="mb-1 header">The North Face</h5>
-              <h6 class="mb-1 header-child">- Wireless Headphones</h6>
-              <div class="rating-stars mb-2">
-                <i class="bi bi-star-fill"></i>
-                <i class="bi bi-star-fill"></i>
-                <i class="bi bi-star-fill"></i>
-                <i class="bi bi-star-fill"></i>
-                <i class="bi bi-star-half"></i>
-                <span class="text-muted ms-2">(4.5)</span>
-              </div>
-              <div class="d-flex justify-content-between align-items-center">
-                <span class="price">129.99 zł</span>
-              </div>
-              <small class="text-secondary">Cena regularna: 129.99 zł</small>
-            </div>
-          </div>
-        </div>
+        <?php endwhile; ?>
       </div>
     </div>
-
-
   </article>
-  <?php include 'adminDashboard/footer.php'; ?>
+  <?php include 'structure/footer.php'; ?>
 </body>
 
 </html>

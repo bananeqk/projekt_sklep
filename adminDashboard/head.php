@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once("../misc/database.php");
-if (!isset($_SESSION["user"]) || $_SESSION["user"]["uprawnienia_id"] != 1) {
+if (!isset($_SESSION["user"]) || $_SESSION["user"]["uprawnienia_id"] != 2) {
     header("Location: ../index.php");
     exit();
 }

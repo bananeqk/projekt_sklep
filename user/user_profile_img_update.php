@@ -5,6 +5,7 @@ if (!isset($_SESSION["user"]["id"])) {
     header("Location: user_profile.php");
     exit;
 }
+// zmiana zdjecia profilowego
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_FILES["profil_img"])) {
     $user_id = $_SESSION["user"]["id"];
     $file = $_FILES["profil_img"];

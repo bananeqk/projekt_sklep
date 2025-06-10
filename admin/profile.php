@@ -1,9 +1,21 @@
 <?php
 session_start();
 require_once("../misc/database.php");
-include '../structure/admin/head.php';
-include '../structure/admin/sidebar.php';
+
+// Zabezpieczenie: tylko admin (uprawnienia_id == 2)
+if (!isset($_SESSION["user"]["uprawnienia_id"]) || $_SESSION["user"]["uprawnienia_id"] != 2) {
+    header("Location: ../index.php");
+    exit;
+}
 ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <?php include("../structure/admin/head.php"); ?>
+    <title>Document</title>
+</head>
+<body>
+    <?php include("../structure/admin/sidebar.php"); ?>
 <div id="page-content-wrapper">
     <nav class="navbar navbar-expand-lg navbar-light bg-transparent py-4 px-4">
         <div class="d-flex align-items-center">
@@ -97,6 +109,7 @@ include '../structure/admin/sidebar.php';
         </div>
     </div>
 </div>
+<?php include("../structure/admin/script.php"); ?>
 </body>
 
 </html>

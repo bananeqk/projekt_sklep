@@ -1,5 +1,13 @@
 <?php
-include '../misc/database.php';
+session_start();
+require_once("../misc/database.php");
+
+// Zabezpieczenie: tylko admin (uprawnienia_id == 2)
+if (!isset($_SESSION["user"]["uprawnienia_id"]) || $_SESSION["user"]["uprawnienia_id"] != 2) {
+    header("Location: ../index.php");
+    exit;
+}
+
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["id"], $_POST["caption_title"], $_POST["caption_text"])) {
     $id = (int) $_POST["id"];
     $caption_title = $_POST["caption_title"];

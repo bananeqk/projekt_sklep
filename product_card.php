@@ -3,13 +3,13 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 session_start();
-require_once("../misc/database.php");
+require_once("misc/database.php");
 
 $product = null;
 $id = null;
 if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     $id = intval($_GET['id']);
-    $result = mysqli_query($conn, "SELECT * FROM produkty p JOIN kolory k ON p.kolor_id = k.id WHERE p.id = $id");
+    $result = mysqli_query($conn, "SELECT p.*, k.kolor FROM produkty p LEFT JOIN kolory k ON p.kolor_id = k.id WHERE p.id = $id");
     $product = mysqli_fetch_assoc($result);
 }
 // może się zdarzyć sytuacja że nie znajdzie produktu, dodałem to bo był duży problem że w bazie danych był id = 9 a na stronie id = 3 na dole jest sprawdzanie dalej czy id istnieje w bazie czy taki produkt jest 
@@ -22,13 +22,13 @@ $gallery = [$product['img_path']];
 
 // dodawanie recenzji
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['user']['id'], $_POST['ocena'], $_POST['tresc'])) {
-    $user_id = (int)$_SESSION['user']['id'];
+    $user_id = (int) $_SESSION['user']['id'];
     // nie usuwać ręcznie produktów z bazy danych, bo może się zdarzyć że nie będzie id produktu
     if (!isset($id) || !is_numeric($id)) {
         die("<div class='alert alert-danger'>Błąd: Nieprawidłowy produkt.</div>");
     }
-    $prod_id = (int)$id;
-    $ocena = max(1, min(5, (int)$_POST['ocena']));
+    $prod_id = (int) $id;
+    $ocena = max(1, min(5, (int) $_POST['ocena']));
     $tresc = trim($_POST['tresc']);
 
     // sprawdzam tutaj czy produkt jest w bazie
@@ -73,9 +73,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['user']['id'], $_PO
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link href="../css/style.css" rel="stylesheet">
-    <link rel="stylesheet" href="../css/catalog.css">
-    <link rel="stylesheet" href="../css/product_card.css">
+    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/catalog.css">
+    <link rel="stylesheet" href="css/product_card.css">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
 
@@ -139,7 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['user']['id'], $_PO
         .product-zalando-title {
             font-family: 'Bitter', serif;
             font-size: 2.1rem;
-            font-weight: 600;
+            font-weight: 500;
             color: #22223b;
             margin-bottom: 0.2rem;
         }
@@ -147,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['user']['id'], $_PO
         .product-zalando-subtitle {
             font-family: 'Rubik', sans-serif;
             font-size: 1.2rem;
-            font-weight: 500;
+            font-weight: bold;
             color: #22223b;
             margin-bottom: 1.2rem;
         }
@@ -166,7 +166,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['user']['id'], $_PO
 
         .product-zalando-rating .bi-star-fill,
         .product-zalando-rating .bi-star-half {
-            color: #000000;
+            color: #efc91c;
         }
 
         .product-zalando-rating .bi-star {
@@ -308,68 +308,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['user']['id'], $_PO
 </head>
 
 <body>
-
-    <!--Skrypty bootstrapa do uruchomienia m.in. karuzeli-->
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-..."
-        crossorigin="anonymous"></script>
-
-    <!--Nawigacja-->
-    <nav class="navbar navbar-expand-lg fixed-top bg-light">
-        <div class="container-fluid">
-            <a class="navbar-brand me-auto m-2" href="#">
-                <img src="zdjecia/sklep_logo.png" width="70px">
-            </a>
-            <div class="offcanvas offcanvas-end" tabindex="2" id="offcanvasNavbar"
-                aria-labelledby="offcanvasNavbarLabel">
-                <div class="offcanvas-header">
-                    <h5 class="offcanvas-title" id="offcanvasNavbarLabel">
-                        <img src="zdjecia/sklep_logo.png" width="70px">
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                </div>
-                <div class="offcanvas-body">
-                    <ul class="navbar-nav justify-content-center flex-grow-1 pe-3 align-items-center">
-                        <li class="nav-item">
-                            <a class="nav-link mx-lg-2" aria-current="page" href="#">Strona główna</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link mx-lg-2" href="#">Katalog</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link mx-lg-2" href="#">O firmie</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link mx-lg-2" href="#">Kontakt</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="../shopping_cart/shopping_cart.php" class="button-1 mx-lg-2 my-2 my-lg-0"><i class="bi bi-cart"></i></a>
-                        </li>
-
-                    </ul>
-                </div>
-            </div>
-
-            <?php if (isset($_SESSION["user"])): ?>
-                <!-- Jeśli użytkownik ma uprawnienia_id = 1 -->
-                <?php if ($_SESSION["user"]["uprawnienia_id"] == 1): ?>
-                    <a href="uzytkownik_panel.php" class="button-1"><i class="bi bi-person-fill"></i></a>
-                <?php endif; ?>
-
-                <?php if ($_SESSION["user"]["uprawnienia_id"] == 2): ?>
-                    <a href="admin/admin.php" class="btn btn-danger"><i class="bi bi-person-fill"></i></a>
-                <?php endif; ?>
-
-            <?php else: ?>
-                <a href="logowanie/log.php" class="button-1">Zaloguj się</a>
-            <?php endif; ?>
-
-            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
-                aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-        </div>
-    </nav>
+    <?php include 'structure/nav.php'; ?>
 
     <div class="container">
         <div class="row justify-content-center">
@@ -379,21 +318,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['user']['id'], $_PO
                         <!-- Gallery -->
                         <div class="col-md-1 d-none d-md-flex flex-column align-items-center">
                             <?php foreach ($gallery as $i => $img): ?>
-                                <img src="../produkty/<?= htmlspecialchars($img) ?>"
-                                    class="product-gallery-thumb<?= $i == 0 ? ' active' : '' ?>" onclick="changeMainImage(this)"
-                                    alt="miniatura">
+                                <img src="zdjecia/produkty/<?= htmlspecialchars($img) ?>"
+                                    class="product-gallery-thumb<?= $i == 0 ? ' active' : '' ?>"
+                                    onclick="changeMainImage(this)" alt="miniatura">
                             <?php endforeach; ?>
                         </div>
                         <!-- Main Image -->
                         <div class="col-md-5 d-flex align-items-center justify-content-center">
-                            <img src="../produkty/<?= htmlspecialchars($gallery[0]) ?>" id="mainProductImage"
+                            <img src="zdjecia/produkty/<?= htmlspecialchars($gallery[0]) ?>" id="mainProductImage"
                                 class="product-gallery-main" alt="Produkt">
                         </div>
                         <!-- Details -->
                         <div class="col-md-6">
                             <div class="product-zalando-title"><?= htmlspecialchars($product['nazwa']) ?></div>
                             <div class="product-zalando-subtitle"><?= htmlspecialchars($product['opis']) ?></div>
-                            <div class="product-zalando-rating" id="showReviewForm" style="cursor:pointer;" title="Kliknij, aby dodać recenzję">
+                            <div class="product-zalando-rating" id="showReviewForm" style="cursor:pointer;"
+                                title="Kliknij, aby dodać recenzję">
                                 <?php
                                 $rating = (float) $product['ocena'];
                                 for ($i = 1; $i <= 5; $i++) {
@@ -408,31 +348,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['user']['id'], $_PO
                                 ?>
                                 <span class="text-muted ms-2" style="font-size:13px;">(<?= $rating ?>)</span>
                             </div>
-                            <?php if (isset($_SESSION['user']['id'])): ?>
-                                <?php
-                                // Sprawdź, czy użytkownik już dodał recenzję
+                            <?php
+                            // Dodaj formularz recenzji tylko jeśli użytkownik jest zalogowany i nie dodał jeszcze recenzji
+                            $show_review_form = false;
+                            if (isset($_SESSION['user']['id'])) {
                                 $user_id = (int)$_SESSION['user']['id'];
                                 $prod_id = (int)$id;
                                 $rec_res = mysqli_query($conn, "SELECT id FROM recenzje WHERE id_uzytkownika=$user_id AND id_produktu=$prod_id");
-                                if (mysqli_num_rows($rec_res) == 0):
-                                ?>
-                                    <form method="post" class="mb-4" id="reviewForm" style="display:none;">
-                                        <div class="mb-2">
-                                            <label class="form-label">Twoja ocena:</label>
-                                            <div>
-                                                <?php for ($i = 1; $i <= 5; $i++): ?>
-                                                    <input type="radio" class="btn-check" name="ocena" id="star<?= $i ?>" value="<?= $i ?>" <?= $i==5?'checked':'' ?>>
-                                                    <label class="btn btn-sm btn-outline-warning" for="star<?= $i ?>"><i class="bi bi-star-fill"></i></label>
-                                                <?php endfor; ?>
-                                            </div>
-                                        </div>
-                                        <div class="mb-2">
-                                            <label class="form-label">Twoja recenzja:</label>
-                                            <textarea name="tresc" class="form-control" rows="3" required></textarea>
-                                        </div>
-                                        <button type="submit" class="btn btn-primary">Dodaj recenzję</button>
-                                    </form>
-                                <?php endif; ?>
+                                if ($rec_res && mysqli_num_rows($rec_res) == 0) {
+                                    $show_review_form = true;
+                                }
+                            }
+                            if ($show_review_form):
+                            ?>
+                            <form method="post" class="mb-4" id="reviewForm" style="display:none;">
+                                <div class="mb-2">
+                                    <label class="form-label">Twoja ocena:</label>
+                                    <div>
+                                        <?php for ($i = 1; $i <= 5; $i++): ?>
+                                            <input type="radio" class="btn-check" name="ocena" id="star<?= $i ?>" value="<?= $i ?>" <?= $i == 5 ? 'checked' : '' ?>>
+                                            <label class="btn btn-sm btn-outline-warning" for="star<?= $i ?>"><i class="bi bi-star-fill"></i></label>
+                                        <?php endfor; ?>
+                                    </div>
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label">Twoja recenzja:</label>
+                                    <textarea name="tresc" class="form-control" rows="3" required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-dark">Dodaj recenzję</button>
+                            </form>
                             <?php endif; ?>
                             <div class="mb-2">
                                 <span
@@ -458,7 +402,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['user']['id'], $_PO
                                     while ($sim = mysqli_fetch_assoc($sim_res)) {
                                         if (!$has_other) {
                                             ?>
-                                            <img src="../produkty/<?= htmlspecialchars($product['img_path']) ?>"
+                                            <img src="zdjecia/produkty/<?= htmlspecialchars($product['img_path']) ?>"
                                                 class="product-gallery-thumb active" style="border:2px solid #000;"
                                                 alt="miniatura">
                                             <?php
@@ -466,14 +410,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['user']['id'], $_PO
                                         }
                                         ?>
                                         <a href="product_card.php?id=<?= $sim['id'] ?>" style="display:inline-block;">
-                                            <img src="../produkty/<?= htmlspecialchars($sim['img_path']) ?>"
+                                            <img src="zdjecia/produkty/<?= htmlspecialchars($sim['img_path']) ?>"
                                                 class="product-gallery-thumb" alt="miniatura">
                                         </a>
                                         <?php
                                     }
                                     if (!$has_other) {
                                         ?>
-                                        <img src="../produkty/<?= htmlspecialchars($product['img_path']) ?>"
+                                        <img src="zdjecia/produkty/<?= htmlspecialchars($product['img_path']) ?>"
                                             class="product-gallery-thumb active" style="border:2px solid #000;"
                                             alt="miniatura">
                                         <?php
@@ -481,23 +425,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['user']['id'], $_PO
                                     ?>
                                 </div>
                             </div>
-                            <div class="product-zalando-size">
-                                <select>
-                                    <option>Wybierz rozmiar</option>
-                                    <option>S</option>
-                                    <option>M</option>
-                                    <option>L</option>
-                                    <option>XL</option>
-                                </select>
-                            </div>
-                            <form method="post" action="../shopping_cart/add_to_cart.php" class="mb-2">
+                            <form method="post" action="/projekt_sklep/shopping_cart/add_to_cart.php" class="mb-2">
                                 <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
                                 <input type="hidden" name="quantity" value="1">
                                 <button type="submit" class="product-zalando-btn-main">
                                     <i class="bi bi-cart-plus"></i> Dodaj do koszyka
                                 </button>
                             </form>
-                            <button class="product-zalando-btn-wishlist"><i class="bi bi-heart"></i></button>
+                            <?php if (isset($_GET['added']) && $_GET['added'] == 1): ?>
+                                <div class="alert alert-success mb-2">Produkt został dodany do koszyka!</div>
+                            <?php endif; ?>
+                            <?php if (isset($_GET['error']) && $_GET['error'] == 'Produkt_nie_istnieje'): ?>
+                                <div class="alert alert-danger mb-2">Nie można dodać produktu do koszyka – produkt nie istnieje.</div>
+                            <?php endif; ?>
                             <div class="product-zalando-info mt-3">
                                 <i class="bi bi-truck"></i> Wysyłamy do 5-6 dni roboczych, zależności od lokalizacji.
                             </div>
@@ -552,34 +492,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['user']['id'], $_PO
                                 // DEBUG: pokaż id produktu z URL i z bazy
                                 echo "<!-- id z URL: $id, id z bazy: {$product['id']} -->";
                                 // Używaj $id z URL, nie $product['id']
-                                $rec_q = mysqli_query($conn, "SELECT r.*, u.imie_nazwisko FROM recenzje r JOIN uzytkownik u ON r.id_uzytkownika=u.id WHERE r.id_produktu=" . (int)$id . " ORDER BY r.data DESC");
+                                $rec_q = mysqli_query($conn, "SELECT r.*, u.imie_nazwisko FROM recenzje r JOIN uzytkownik u ON r.id_uzytkownika=u.id WHERE r.id_produktu=" . (int) $id . " ORDER BY r.data DESC");
                                 if (!$rec_q) {
                                     echo "<div class='alert alert-danger'>Błąd SQL: " . htmlspecialchars(mysqli_error($conn)) . "</div>";
                                 }
                                 echo "<!-- Liczba recenzji: " . mysqli_num_rows($rec_q) . " -->";
                                 if (mysqli_num_rows($rec_q) > 0):
                                     while ($rec = mysqli_fetch_assoc($rec_q)):
-                                ?>
-                                    <div class="d-flex flex-row align-items-start mb-3" style="gap:12px;">
-                                        <div style="width:44px;height:44px;border-radius:50%;background:#e5e7eb;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;color:#555;">
-                                            <?= mb_substr(htmlspecialchars($rec['imie_nazwisko']), 0, 1) ?>
-                                        </div>
-                                        <div class="flex-grow-1">
-                                            <div class="d-flex align-items-center mb-1">
-                                                <span style="font-weight:600;"><?= htmlspecialchars($rec['imie_nazwisko']) ?></span>
-                                                <span class="ms-3 text-warning" style="font-size:15px;">
-                                                    <?php for ($i = 1; $i <= 5; $i++): ?>
-                                                        <i class="bi <?= $i <= $rec['ocena'] ? 'bi-star-fill' : 'bi-star' ?>"></i>
-                                                    <?php endfor; ?>
-                                                </span>
-                                                <span class="ms-auto text-muted" style="font-size:13px;"><?= htmlspecialchars($rec['data']) ?></span>
+                                        ?>
+                                        <div class="d-flex flex-row align-items-start mb-3" style="gap:12px;">
+                                            <div
+                                                style="width:44px;height:44px;border-radius:50%;background:#e5e7eb;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;color:#555;">
+                                                <?= mb_substr(htmlspecialchars($rec['imie_nazwisko']), 0, 1) ?>
                                             </div>
-                                            <div style="background:#f8f9fa;border-radius:8px;padding:10px 14px;font-size:1.05rem;">
-                                                <?= nl2br(htmlspecialchars($rec['tresc'])) ?>
+                                            <div class="flex-grow-1">
+                                                <div class="d-flex align-items-center mb-1">
+                                                    <span
+                                                        style="font-weight:600;"><?= htmlspecialchars($rec['imie_nazwisko']) ?></span>
+                                                    <span class="ms-3 text-warning" style="font-size:15px;">
+                                                        <?php for ($i = 1; $i <= 5; $i++): ?>
+                                                            <i
+                                                                class="bi <?= $i <= $rec['ocena'] ? 'bi-star-fill' : 'bi-star' ?>"></i>
+                                                        <?php endfor; ?>
+                                                    </span>
+                                                    <span class="ms-auto text-muted"
+                                                        style="font-size:13px;"><?= htmlspecialchars($rec['data']) ?></span>
+                                                </div>
+                                                <div
+                                                    style="background:#f8f9fa;border-radius:8px;padding:10px 14px;font-size:1.05rem;">
+                                                    <?= nl2br(htmlspecialchars($rec['tresc'])) ?>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                <?php endwhile; else: ?>
+                                    <?php endwhile; else: ?>
                                     <div class="text-muted">Brak recenzji dla tego produktu.</div>
                                 <?php endif; ?>
                             </div>
@@ -596,7 +541,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['user']['id'], $_PO
                         while ($sim2 = mysqli_fetch_assoc($sim_res2)) {
                             echo '<a href="product_card.php?id=' . $sim2['id'] . '" style="text-decoration:none;color:inherit;">';
                             echo '<div style="width:110px;text-align:center">';
-                            echo '<img src="../produkty/' . htmlspecialchars($sim2['img_path']) . '" style="width:100px;height:100px;object-fit:cover;border-radius:8px;background:#f8f9fa;">';
+                            echo '<img src="zdjecia/produkty/' . htmlspecialchars($sim2['img_path']) . '" style="width:100px;height:100px;object-fit:cover;border-radius:8px;background:#f8f9fa;">';
                             echo '<div style="font-size:13px;margin-top:6px;">' . htmlspecialchars($sim2['nazwa']) . '</div>';
                             echo '</div></a>';
                         }
@@ -615,15 +560,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['user']['id'], $_PO
             el.classList.add('active');
         }
 
-        // Pokazuj formularz recenzji po kliknięciu na ocenę
-        document.addEventListener('DOMContentLoaded', function() {
+        // formularz na recenzje po kliknieciu w ocene
+        document.addEventListener('DOMContentLoaded', function () {
             var rating = document.getElementById('showReviewForm');
             var form = document.getElementById('reviewForm');
             if (rating && form) {
-                rating.addEventListener('click', function() {
+                rating.addEventListener('click', function () {
                     form.style.display = (form.style.display === 'none' || form.style.display === '') ? 'block' : 'none';
                     if (form.style.display === 'block') {
-                        form.scrollIntoView({behavior: "smooth", block: "center"});
+                        form.scrollIntoView({ behavior: "smooth", block: "center" });
                     }
                 });
             }
@@ -631,7 +576,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['user']['id'], $_PO
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-..."
         crossorigin="anonymous"></script>
-    <?php include '../adminDashboard/footer.php'; ?>
+    <?php include 'structure/footer.php'; ?>
 </body>
 
 </html>

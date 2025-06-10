@@ -28,11 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <html>
 
 <head>
-    <meta charset="UTF-8">
-    <title>Kontakt</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
+    <?php include("structure/header.php"); ?>
     <style>
         .contact-wrapper {
             background: white;
@@ -141,57 +137,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     </style>
 </head>
 
-<body class="bg-light">
-    <!--Nawigacja-->
-    <nav class="navbar navbar-expand-lg fixed-top bg-light">
-        <div class="container-fluid">
-            <a class="navbar-brand me-auto m-2" href="#">
-                <img src="zdjecia/sklep_logo.png" width="70px">
-            </a>
-            <div class="offcanvas offcanvas-end" tabindex="2" id="offcanvasNavbar"
-                aria-labelledby="offcanvasNavbarLabel">
-                <div class="offcanvas-header">
-                    <h5 class="offcanvas-title" id="offcanvasNavbarLabel">
-                        <img src="zdjecia/sklep_logo.png" width="70px">
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                </div>
-                <div class="offcanvas-body">
-                    <ul class="navbar-nav justify-content-center flex-grow-1 pe-3 align-items-center">
-                        <li class="nav-item">
-                            <a class="nav-link mx-lg-2" aria-current="page" href="index.php">Strona główna</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link mx-lg-2" href="katalog.php">Katalog</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link mx-lg-2" href="about.php">O firmie</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link mx-lg-2" href="contact.php">Kontakt</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="koszyk.php" class="button-1 mx-lg-2 my-2 my-lg-0"><i class="bi bi-cart"></i></a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <?php if (isset($_SESSION["user"])): ?>
-                <?php if ($_SESSION["user"]["uprawnienia_id"] == 1): ?>
-                    <a href="user/uzytkownik_panel.php" class="button-1"><i class="bi bi-person-fill"></i></a>
-                <?php endif; ?>
-                <?php if ($_SESSION["user"]["uprawnienia_id"] == 2): ?>
-                    <a href="admin/admin.php" class="btn btn-danger"><i class="bi bi-person-fill"></i></a>
-                <?php endif; ?>
-            <?php else: ?>
-                <a href="logowanie/log.php" class="button-1">Zaloguj się</a>
-            <?php endif; ?>
-            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
-                aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-        </div>
-    </nav>
+<body>
+    <?php include("structure/nav.php"); ?>
     <div class="container py-5" style="margin-top: 80px;">
         <div class="row justify-content-center">
             <div class="col-lg-10">
@@ -281,8 +228,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             </div>
         </div>
     </div>
-    <?= include("adminDashboard/footer.php"); ?>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <?php include("structure/footer.php"); ?>
 </body>
 
 </html>

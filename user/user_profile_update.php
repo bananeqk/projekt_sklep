@@ -1,8 +1,8 @@
 <?php
 session_start();
-require_once("../misc/database.php");
+require_once(dirname(__DIR__) . "/misc/database.php");
 if (!isset($_SESSION["user"]["id"])) {
-    header("Location: user_profile.php");
+    header("Location: /projekt_sklep/user/user_profile.php");
     exit;
 }
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
@@ -35,5 +35,5 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         mysqli_stmt_execute($log_stmt);
     }
 }
-header("Location: user_profile.php");
+header("Location: /projekt_sklep/user/user_profile.php");
 exit;

@@ -1,15 +1,21 @@
 <?php
-// sprawdzanie błędów podobny albo taki sam jest w product_card.php
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
 session_start();
+require_once("../misc/database.php");
 
-
-include '../adminDashboard/head.php';
-include '../adminDashboard/sidebar.php';
+if (!isset($_SESSION["user"]["uprawnienia_id"]) || $_SESSION["user"]["uprawnienia_id"] != 2) {
+    header("Location: ../index.php");
+    exit;
+}
 ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <?php include("../structure/admin/head.php"); ?>
+    <title>Document</title>
+</head>
+<body>
+    <?php include("../structure/admin/sidebar.php"); ?>
 <div id="wrapper">
-    <!-- Page Content -->
     <div id="page-content-wrapper">
         <nav class="navbar navbar-expand-lg navbar-light bg-transparent py-4 px-4">
             <div class="d-flex align-items-center">
@@ -23,24 +29,14 @@ include '../adminDashboard/sidebar.php';
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle second-text fw-bold" href="#" id="navbarDropdown"
-                            role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-user me-2"></i>
-                            <?php if (isset($_SESSION["user"])): ?>
-                                <?= htmlspecialchars($_SESSION["user"]["imie_nazwisko"]) ?>
-                            <?php endif; ?>
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="#">Profil</a></li>
-                            <li><a class="dropdown-item" href="#">Ustawienia</a></li>
-                            <li><a class="dropdown-item" href="#">Wyloguj się</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 fw-bold second-text text-dark"> 
+                <i class="fas fa-user me-2"></i>
+                <?php if (isset($_SESSION["user"])): ?>
+                    <?= htmlspecialchars($_SESSION["user"]["imie_nazwisko"]) ?>
+                <?php endif; ?>
+            </ul>
+        </div>
         </nav>
         <div class="container-fluid px-4">
             <div class="row justify-content-center">
@@ -120,12 +116,26 @@ include '../adminDashboard/sidebar.php';
                             <?php
                             require_once("../misc/database.php");
                             $where = "";
+                            $params = [];
+                            $types = "";
                             if (isset($_GET['search']) && $_GET['search'] !== '') {
-                                $search = mysqli_real_escape_string($conn, $_GET['search']);
-                                $where = "WHERE p.nazwa LIKE '%$search%'";
+                                $search = '%' . $_GET['search'] . '%';
+                                $where = "WHERE p.nazwa LIKE ?";
+                                $params[] = $search;
+                                $types .= "s";
                             }
-                            $sql = "SELECT * FROM produkty p JOIN kategorie k ON p.id_kategorii = k.id JOIN kolory c ON p.kolor_id = c.id $where";
-                            $result = mysqli_query($conn, $sql);
+                            $sql = "SELECT p.*, k.kategoria, c.kolor FROM produkty p
+                                    LEFT JOIN kategorie k ON p.id_kategorii = k.id
+                                    LEFT JOIN kolory c ON p.kolor_id = c.id
+                                    $where";
+                            if ($where) {
+                                $stmt = mysqli_prepare($conn, $sql);
+                                mysqli_stmt_bind_param($stmt, $types, ...$params);
+                                mysqli_stmt_execute($stmt);
+                                $result = mysqli_stmt_get_result($stmt);
+                            } else {
+                                $result = mysqli_query($conn, $sql);
+                            }
                             ?>
                             <div class="table-responsive">
                                 <table class="table table-hover align-middle">
@@ -148,7 +158,7 @@ include '../adminDashboard/sidebar.php';
                                             <tr>
                                                 <td class="text-center"><?= htmlspecialchars($row['id']) ?></td>
                                                 <td class="text-center">
-                                                    <img src="../produkty/<?= htmlspecialchars($row['img_path']) ?>" width="80px">
+                                                    <img src="../zdjecia/produkty/<?= htmlspecialchars($row['img_path']) ?>" width="80px">
                                                 </td>
                                                 <td class="text-center"><?= htmlspecialchars($row['nazwa']) ?></td>
                                                 <td class="text-center"><?= htmlspecialchars($row['opis']) ?></td>
@@ -158,7 +168,13 @@ include '../adminDashboard/sidebar.php';
                                                 <td class="text-center"><?= htmlspecialchars($row['ocena']) ?></td>
                                                 <td class="text-center"><?= htmlspecialchars($row['kolor'] ?? '') ?></td>
                                                 <td class="text-center">
-                                                    <!-- Dodaj linki do edycji/usuwania jeśli chcesz -->
+                                                    <a href="edit_product.php?id=<?= $row['id'] ?>" class="btn btn-primary btn-sm">
+                                                        <i class="fas fa-edit"></i> Edytuj
+                                                    </a>
+                                                    <a href="delete_product.php?id=<?= $row['id'] ?>" class="btn btn-danger btn-sm"
+                                                       onclick="return confirm('Na pewno usunąć produkt?');">
+                                                        <i class="fas fa-trash-alt"></i> Usuń
+                                                    </a>
                                                 </td>
                                             </tr>
                                         <?php } ?>
@@ -172,16 +188,7 @@ include '../adminDashboard/sidebar.php';
         </div>
     </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    var el = document.getElementById("wrapper");
-    var toggleButton = document.getElementById("menu-toggle");
-    if (toggleButton) {
-        toggleButton.onclick = function() {
-            el.classList.toggle("toggled");
-        };
-    }
-</script>
+<?php include("../structure/admin/script.php"); ?>
 </body>
 
 </html>

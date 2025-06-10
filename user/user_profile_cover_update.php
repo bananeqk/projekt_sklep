@@ -5,6 +5,8 @@ if (!isset($_SESSION["user"]["id"])) {
     header("Location: user_profile.php");
     exit;
 }
+
+// jak w produktach czy karuzeli dodawanie zdjecia podobne dzialanie prawie identyczne
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_FILES["cover_img"])) {
     $user_id = $_SESSION["user"]["id"];
     $file = $_FILES["cover_img"];
@@ -12,9 +14,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_FILES["cover_img"])) {
         $ext = pathinfo($file["name"], PATHINFO_EXTENSION);
         $filename = "cover_" . $user_id . "_" . time() . "." . $ext;
         $target = "../zdjecia/covers/" . $filename;
-        if (!is_dir("../zdjecia/covers/")) {
-            mkdir("../zdjecia/covers/", 0777, true);
-        }
         if (move_uploaded_file($file["tmp_name"], $target)) {
             $db_path = "zdjecia/covers/" . $filename;
             $stmt = mysqli_prepare($conn, "UPDATE uzytkownik SET cover_img=? WHERE id=?");

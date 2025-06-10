@@ -1,9 +1,21 @@
 <?php
 session_start();
 require_once("../misc/database.php");
-include '../adminDashboard/head.php';
-include '../adminDashboard/sidebar.php';
+
+if (!isset($_SESSION["user"]["uprawnienia_id"]) || $_SESSION["user"]["uprawnienia_id"] != 2) {
+    header("Location: ../index.php");
+    exit;
+}
 ?>
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <?php include("../structure/admin/head.php"); ?>
+    <title>Document</title>
+</head>
+<body>
+    <?php include("../structure/admin/sidebar.php"); ?>
+<div id="wrapper">
 <div id="page-content-wrapper">
     <nav class="navbar navbar-expand-lg navbar-light bg-transparent py-4 px-4">
         <div class="d-flex align-items-center">
@@ -17,16 +29,11 @@ include '../adminDashboard/sidebar.php';
         </button>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle second-text fw-bold switch" href="#" id="navbarDropdown"
-                        role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fas fa-user me-2"></i>
-                        <?php if (isset($_SESSION["user"])): ?>
-                            <?= htmlspecialchars($_SESSION["user"]["imie_nazwisko"]) ?>
-                        <?php endif; ?>
-                    </a>
-                </li>
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 fw-bold second-text text-dark"> 
+                <i class="fas fa-user me-2"></i>
+                <?php if (isset($_SESSION["user"])): ?>
+                    <?= htmlspecialchars($_SESSION["user"]["imie_nazwisko"]) ?>
+                <?php endif; ?>
             </ul>
         </div>
     </nav>
@@ -40,20 +47,20 @@ include '../adminDashboard/sidebar.php';
                 <div class="card mb-4 shadow-sm border-0">
                     <div class="card-header bg-dark text-white d-flex align-items-center"
                         style="border-radius: .5rem .5rem 0 0;">
-                        <i class="fa-solid fa-user-circle fa-2x me-3"></i>
+                        <i class="fa-solid fas fa-user fa-2x me-3"></i>
                         <div>
                             <div class="fw-bold"><?= htmlspecialchars($row['imie_nazwisko']) ?></div>
                             <small>
-                                <i class="fa-solid fa-envelope"></i> <?= htmlspecialchars($row['email']) ?>
+                                <i class="fa-solid fas fa-at"></i> <?= htmlspecialchars($row['email']) ?>
                                 &nbsp;|&nbsp;
-                                <i class="fa-solid fa-calendar"></i> <?= htmlspecialchars($row['data_stworzenia']) ?>
+                                <i class="fa-solid fas fa-calendar-alt"></i> <?= htmlspecialchars($row['data_stworzenia']) ?>
                             </small>
                         </div>
                     </div>
                     <div class="card-body">
                         <div class="mb-2">
                             <span class="badge bg-success text-dark"><i
-                                    class="fa-solid fa-tag me-1"></i><?= htmlspecialchars($row['temat']) ?></span>
+                                    class="fa-solid fas fa-sign me-1"></i><?= htmlspecialchars($row['temat']) ?></span>
                         </div>
                         <div style="white-space: pre-line;"><?= htmlspecialchars($row['wiadomosc']) ?></div>
                     </div>
@@ -63,6 +70,6 @@ include '../adminDashboard/sidebar.php';
         <?php endif; ?>
     </div>
 </div>
-<?= include '../adminDashboard/script.php'; ?>
+<?php include '../adminDashboard/script.php'; ?>
 </body>
 </html>

@@ -1,8 +1,11 @@
 <?php
-include '../adminDashboard/head.php';
-include '../adminDashboard/sidebar.php';
-
+session_start();
 require_once("../misc/database.php");
+
+if (!isset($_SESSION["user"]["uprawnienia_id"]) || $_SESSION["user"]["uprawnienia_id"] != 2) {
+    header("Location: ../index.php");
+    exit;
+}
 
 if (isset($_GET['id'])) {
     $id = (int)$_GET['id'];
@@ -24,6 +27,15 @@ if (isset($_GET['id'])) {
     exit();
 }
 ?>
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <?php include("../structure/admin/head.php"); ?>
+    <title>Document</title>
+</head>
+<body>
+    <?php include("../structure/admin/sidebar.php"); ?>
+<div id="wrapper"></div>
 <div class="container mt-5">
     <h2>Edytuj wpis w karuzeli</h2>
     <form method="post" action="form_carousel.php">

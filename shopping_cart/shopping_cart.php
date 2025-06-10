@@ -2,11 +2,25 @@
 session_start();
 require_once("../misc/database.php");
 
-$cart = $_SESSION["cart"] ?? [];
+$cart = [];
 $product_data = [];
 $total = 0;
-$total_items = array_sum($cart);
 
+if (isset($_SESSION["user"]["id"])) {
+    // Zalogowany użytkownik: koszyk z bazy
+    $user_id = $_SESSION["user"]["id"];
+    $result = mysqli_query($conn, "SELECT * FROM koszyk WHERE id_uzytkownika = $user_id");
+    while ($row = mysqli_fetch_assoc($result)) {
+        $cart[$row['id_produktu']] = $row['ilosc'];
+    }
+} else {
+    // Niezalogowany użytkownik: koszyk z sesji
+    if (isset($_SESSION['cart']) && is_array($_SESSION['cart'])) {
+        $cart = $_SESSION['cart'];
+    }
+}
+
+// Pobierz dane produktów
 if ($cart) {
     $ids = implode(",", array_map("intval", array_keys($cart)));
     $result = mysqli_query($conn, "SELECT * FROM produkty WHERE id IN ($ids)");
@@ -20,33 +34,16 @@ if ($cart) {
 <html lang="pl">
 
 <head>
-    <meta charset="UTF-8">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <link href="css/style.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/catalog.css">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <link
-        href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&family=Syne:wght@400..800&display=swap"
-        rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,100..900;1,100..900&display=swap"
-        rel="stylesheet">
-
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+<?php include("../structure/cart_structure/header.php"); ?>
 
     <title>Main - strona</title>
     <style>
+        body {
+            padding-top: 110px !important; /* lub inna wartość zależnie od wysokości nawigacji */
+        }
         .cart-wrapper {
             background-color:rgb(255, 255, 255);
-            min-height: 100vh;
+            min-height: 70vh;
             padding: 40px 0;
         }
 
@@ -130,82 +127,7 @@ if ($cart) {
 </head>
 
 <body>
-
-
-
-
-
-
-    <!--Skrypty bootstrapa do uruchomienia m.in. karuzeli-->
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-..."
-        crossorigin="anonymous"></script>
-
-
-
-
-
-
-
-
-
-    <!--Nawigacja-->
-    <nav class="navbar navbar-expand-lg fixed-top bg-light">
-        <div class="container-fluid">
-            <a class="navbar-brand me-auto m-2" href="#">
-                <img src="zdjecia/sklep_logo.png" width="70px">
-            </a>
-            <div class="offcanvas offcanvas-end" tabindex="2" id="offcanvasNavbar"
-                aria-labelledby="offcanvasNavbarLabel">
-                <div class="offcanvas-header">
-                    <h5 class="offcanvas-title" id="offcanvasNavbarLabel">
-                        <img src="zdjecia/sklep_logo.png" width="70px">
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                </div>
-                <div class="offcanvas-body">
-                    <ul class="navbar-nav justify-content-center flex-grow-1 pe-3 align-items-center">
-                        <li class="nav-item">
-                            <a class="nav-link mx-lg-2" aria-current="page" href="#">Strona główna</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link mx-lg-2" href="#">Katalog</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link mx-lg-2" href="#">O firmie</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link mx-lg-2" href="#">Kontakt</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="shopping_cart.php" class="button-1 mx-lg-2 my-2 my-lg-0"><i class="bi bi-cart"></i></a>
-                        </li>
-
-                    </ul>
-                </div>
-            </div>
-
-            <?php if (isset($_SESSION["user"])): ?>
-                <!-- Jeśli użytkownik ma uprawnienia_id = 1 -->
-                <?php if ($_SESSION["user"]["uprawnienia_id"] == 1): ?>
-                    <a href="uzytkownik_panel.php" class="button-1"><i class="bi bi-person-fill"></i></a>
-                <?php endif; ?>
-
-                <?php if ($_SESSION["user"]["uprawnienia_id"] == 2): ?>
-                    <a href="admin/admin.php" class="btn btn-danger"><i class="bi bi-person-fill"></i></a>
-                <?php endif; ?>
-
-            <?php else: ?>
-                <a href="logowanie/log.php" class="button-1">Zaloguj się</a>
-            <?php endif; ?>
-
-            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
-                aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-        </div>
-    </nav>
-    </head>
+<?php include("../structure/cart_structure/nav.php"); ?>
 
     <body>
         <div class="cart-wrapper">
@@ -215,18 +137,6 @@ if ($cart) {
                     <div class="col-lg-8">
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <h4 class="mb-0">Twój koszyk</h4>
-                            <span class="text-muted">
-                                <?php
-                                // Popraw odmianę słowa "produkt" po polsku
-                                if ($total_items == 1) {
-                                    echo "1 produkt";
-                                } elseif ($total_items % 10 >= 2 && $total_items % 10 <= 4 && ($total_items % 100 < 10 || $total_items % 100 >= 20)) {
-                                    echo $total_items . " produkty";
-                                } else {
-                                    echo $total_items . " produktów";
-                                }
-                                ?>
-                            </span>
                         </div>
 
                         <!-- Product Cards -->
@@ -239,7 +149,7 @@ if ($cart) {
                                     <div class="product-card p-3 shadow-sm">
                                         <div class="row align-items-center">
                                             <div class="col-md-2">
-                                                <img src="../produkty/<?= htmlspecialchars($p['img_path']) ?>" alt="Product" class="product-image">
+                                                <img src="../zdjecia/produkty/<?= htmlspecialchars($p['img_path']) ?>" alt="Product" class="product-image">
                                             </div>
                                             <div class="col-md-4">
                                                 <h6 class="mb-1"><?= htmlspecialchars($p['nazwa']) ?></h6>
@@ -288,11 +198,12 @@ if ($cart) {
                                 <span class="fw-bold">Do zapłaty</span>
                                 <span class="fw-bold"><?= $total ?> zł</span>
                             </div>
-                            <button class="btn btn-primary checkout-btn w-100 mb-3"
-                                <?php if (!$cart || !isset($_SESSION["user"])) ?>
-                                onclick="window.location.href='order_checkout.php'; return false;">
-                                Zamów
-                            </button>
+                            <form method="post" action="to_checkout.php">
+                                <button type="submit" class="btn btn-primary checkout-btn w-100 mb-3"
+                                    <?php if (!$cart) echo 'disabled'; ?>>
+                                    Zamów
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
